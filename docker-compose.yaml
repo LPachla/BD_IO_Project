@@ -1,8 +1,9 @@
 services:
   bd:
-    image: postgres
+    build: ./db
     restart: unless-stopped
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     expose:
       - 5432
