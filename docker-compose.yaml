@@ -39,3 +39,17 @@ services:
       - 80
     volumes:
       - ./api:/var/www/html
+
+  pgadmin:
+    restart: unless-stopped
+    image: dpage/pgadmin4
+    expose:
+      - 80
+      - 443
+    depends_on:
+      - bd
+    ports:
+      - 81:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: example@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
