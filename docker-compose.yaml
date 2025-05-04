@@ -21,7 +21,7 @@ services:
       - api
 
   web:
-    build: .
+    image: ./api
     restart: unless-stopped
     depends_on:
       - bd
@@ -31,7 +31,7 @@ services:
       - ./web:/var/www/html
 
   api:
-    build: .
+    build: ./api
     restart: unless-stopped
     depends_on:
       - bd
