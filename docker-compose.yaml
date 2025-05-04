@@ -21,14 +21,16 @@ services:
       - api
 
   web:
-    image: ./api
+    image: node:lts
     restart: unless-stopped
     depends_on:
       - bd
     expose:
       - 80
     volumes:
-      - ./web:/var/www/html
+      - ./web:/app
+    working_dir: /app
+    command: npm start
 
   api:
     build: ./api
