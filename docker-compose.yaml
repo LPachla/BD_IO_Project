@@ -7,8 +7,8 @@ services:
       POSTGRES_PASSWORD: password
     expose:
       - 5432
-    ports:
-      - 5432:5432
+    networks:
+      - backnet
 
   nginx:
     image: nginx:latest
@@ -16,27 +16,36 @@ services:
       - 80:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - frontnet
+      - backnet
     depends_on:
       - web
       - api
 
   web:
-    build: .
+    image: node:lts
     restart: unless-stopped
     depends_on:
       - bd
     expose:
       - 80
+    networks:
+      - backnet
     volumes:
-      - ./web:/var/www/html
+      - ./web:/app
+    working_dir: /app
+    command: npm start
 
   api:
-    build: .
+    build: ./api
     restart: unless-stopped
     depends_on:
       - bd
     expose:
       - 80
+    networks:
+      - backnet
     volumes:
       - ./api:/var/www/html
 
@@ -48,8 +57,13 @@ services:
       - 443
     depends_on:
       - bd
-    ports:
-      - 81:80
+    networks:
+      - backnet
     environment:
       PGADMIN_DEFAULT_EMAIL: example@example.com
       PGADMIN_DEFAULT_PASSWORD: password
+
+networks:
+  frontnet:
+    driver: bridge
+  backnet:
