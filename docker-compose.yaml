@@ -28,8 +28,8 @@ services:
     restart: unless-stopped
     depends_on:
       - bd
-    expose:
-      - 80
+    ports:
+      - 3000:3000
     networks:
       - backnet
     volumes:
