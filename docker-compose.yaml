@@ -35,7 +35,7 @@ services:
     volumes:
       - ./web:/app
     working_dir: /app
-    command: npm start
+    command: bash -c "npm install && npm start"
 
   api:
     build: ./api
