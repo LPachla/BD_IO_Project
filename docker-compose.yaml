@@ -28,14 +28,14 @@ services:
     restart: unless-stopped
     depends_on:
       - bd
-    expose:
-      - 80
+    ports:
+      - 3000:3000
     networks:
       - backnet
     volumes:
       - ./web:/app
     working_dir: /app
-    command: npm start
+    command: bash -c "npm install && npm start"
 
   api:
     build: ./api
