@@ -4,6 +4,8 @@
   "main": "index.js",
   "private": true,
   "dependencies": {
+    "@mantine/core": "^8.0.1",
+    "@mantine/hooks": "^8.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
@@ -30,5 +32,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "postcss": "^8.5.3",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1"
   }
 }
