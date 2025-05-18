@@ -41,5 +41,24 @@
     <p>This page is for use in illustrative examples in documents. You may use this
     page in literature without prior coordination or asking for permission.</p>
 </div>
+
+<h1>Lista powiatów</h1>
+<ul id="powiatyList"></ul>
+
+<script>
+    fetch('../api/index.php?action=powiaty')
+        .then(response => response.json())
+        .then(data => {
+            const list = document.getElementById('powiatyList');
+            data.forEach(powiat => {
+                const item = document.createElement('li');
+                item.textContent = `${powiat.id}, ${powiat.powiat}`;
+                list.appendChild(item);
+            });
+        })
+        .catch(error => {
+            console.error('GET error:', error);
+        });
+</script>
 </body>
 </html>

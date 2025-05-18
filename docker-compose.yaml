@@ -24,19 +24,21 @@ services:
       - api
 
   web:
-    build: .
+    image: node:lts
     restart: unless-stopped
     depends_on:
       - bd
-    expose:
-      - 80
+    ports:
+      - 3000:3000
     networks:
       - backnet
     volumes:
-      - ./web:/var/www/html
+      - ./web:/app
+    working_dir: /app
+    command: bash -c "npm install && npm start"
 
   api:
-    build: .
+    build: ./api
     restart: unless-stopped
     depends_on:
       - bd
