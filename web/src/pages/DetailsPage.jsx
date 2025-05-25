@@ -6,6 +6,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mantine/core';
+import '../styles/detailsPage.css';
 
 // Ustawienie domyślnych ikon Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -138,53 +139,28 @@ export default function DetailsPage() {
   }
 
   return (
-    <div style={{
-      background: '#f1faee',
-      minHeight: '100vh',
-      padding: '40px 0',
-      position: 'relative', // dla pozycjonowania strzałek
-    }}>
-      {/* LEWA STRZAŁKA */}
+    <div className="details-page-container">
+      {/* Strzałki */}
       {prevAttraction && (
         <Button
+          className="details-arrow-btn left"
           variant="outline"
           color="green"
           size="lg"
           radius="xl"
-          style={{
-            position: 'fixed',
-            top: '50%',
-            left: '36px',
-            transform: 'translateY(-50%)',
-            fontSize: 40,
-            padding: "12px 24px",
-            zIndex: 1000,
-            boxShadow: '0 2px 8px #0002',
-          }}
           onClick={() => navigate(`/details/${prevAttraction.id}`)}
           title={`Poprzednia: ${prevAttraction.name}`}
         >
           &#8592;
         </Button>
       )}
-
-      {/* PRAWA STRZAŁKA */}
       {nextAttraction && (
         <Button
+          className="details-arrow-btn right"
           variant="outline"
           color="green"
           size="lg"
           radius="xl"
-          style={{
-            position: 'fixed',
-            top: '50%',
-            right: '36px',
-            transform: 'translateY(-50%)',
-            fontSize: 40,
-            padding: "12px 24px",
-            zIndex: 1000,
-            boxShadow: '0 2px 8px #0002',
-          }}
           onClick={() => navigate(`/details/${nextAttraction.id}`)}
           title={`Następna: ${nextAttraction.name}`}
         >
@@ -192,69 +168,28 @@ export default function DetailsPage() {
         </Button>
       )}
 
-      {/* GŁÓWNA TREŚĆ – BEZ STRZAŁEK */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        minHeight: '75vh', // <- zajmuje prawie całą wysokość okna
-        maxWidth: '1100px',
-        margin: '0 auto',
-        paddingTop: '30px',
-        paddingBottom: '30px',
-      }}>
-
-        {/* GŁÓWNA SEKCJA */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '40px',
-          flex: 1,                  // równomierny podział miejsca
-          minHeight: 0,
-          marginBottom: '30px',
-        }}>
+      {/* Główna sekcja */}
+      <div className="details-main-section">
+        <div className="details-top-row">
           <img
+            className="details-img"
             src={attraction.image}
             alt={attraction.name}
-            style={{
-              width: '520px',           // powiększ szerokość
-              height: '300px',          // powiększ wysokość
-              borderRadius: '12px',
-              objectFit: 'cover',
-              boxShadow: '0 2px 8px #0002'
-            }}
           />
           <div style={{ flex: 1 }}>
-            <h2 style={{ marginBottom: '24px', marginTop: '0', fontWeight: 500, fontSize: '2.2rem' }}>{attraction.name}</h2>
-            <p style={{ lineHeight: 1.8, fontSize: '1.25rem' }}>{attraction.description}</p>
+            <h2 className="details-title">{attraction.name}</h2>
+            <p className="details-desc">{attraction.description}</p>
           </div>
         </div>
 
-        {/* Divider */}
-        <hr style={{
-          width: '100%',
-          margin: '0 0 36px 0',
-          border: 'none',
-          borderTop: '2px solid #e2e9e2'
-        }} />
+        <hr className="details-divider" />
 
-        {/* MAPA + DŁUŻSZY OPIS */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '40px',
-          flex: 1,
-          minHeight: 0,
-        }}>
-          <div>
+        <div className="details-bottom-row">
+          <div className="details-map">
             <MapContainer
               center={[attraction.lat, attraction.lng]}
               zoom={15}
-              style={{
-                width: '520px',         // powiększ szerokość
-                height: '300px',        // powiększ wysokość
-                borderRadius: '10px'
-              }}
+              style={{ width: '100%', height: '100%', borderRadius: '10px' }}
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -267,53 +202,20 @@ export default function DetailsPage() {
               </Marker>
             </MapContainer>
           </div>
-          <div style={{ flex: 1 }}>
-            <p style={{ lineHeight: 1.8, fontSize: '1.25rem' }}>{attraction.details}</p>
+          <div className="details-long-desc">
+            <p>{attraction.details}</p>
           </div>
         </div>
       </div>
 
-      {/* Dolny panel nawigacji */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: '48px'
-      }}>
-        <div style={{
-          display: 'flex',
-          borderRadius: '9999px',
-          overflow: 'hidden',
-          background: '#fff',
-          border: '1px solid #c4e6c6'
-        }}>
-          <Link to="/" style={{ textDecoration: 'none', flex: 1 }}>
-            <button style={{
-              padding: '10px 40px',
-              border: 'none',
-              background: '#fff',
-              color: '#222',
-              fontWeight: 500,
-              fontSize: '1rem',
-              cursor: 'pointer'
-            }}>
-              Mapa
-            </button>
-          </Link>
-          <Link to="/popular" style={{ textDecoration: 'none', flex: 1 }}>
-            <button style={{
-              padding: '10px 40px',
-              border: 'none',
-              background: '#fff',
-              color: '#222',
-              fontWeight: 500,
-              fontSize: '1rem',
-              cursor: 'pointer'
-            }}>
-              Popularne
-            </button>
-          </Link>
+      {/* Dolny pasek */}
+      <div className="details-bottom-bar">
+        <div className="details-bottom-tabs">
+          <Link to="/"><button>Mapa</button></Link>
+          <Link to="/popular"><button>Popularne</button></Link>
         </div>
       </div>
+
     </div>
   );
 }
