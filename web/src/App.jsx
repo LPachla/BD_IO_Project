@@ -31,11 +31,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/">
-            <Route index element = {<MapPage/>}/>
-            <Route path = "details" element = {<DetailsPage/>}/>
-            <Route path = "popular" element = {<PopularPage/>}/>
+            <Route index element={<MapPage />} />
+            <Route path="details/:id" element={<DetailsPage />} />
+            <Route path="popular" element={<PopularPage />} />
           </Route>
-        </Routes>    
+        </Routes>
       </BrowserRouter>
     </MantineProvider>
   );
