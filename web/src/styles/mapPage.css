@@ -16,13 +16,7 @@
   font-weight: bold;
 }
 .search-bar {
-  padding: 10px 20px;
-  font-size: 16px;
-  width: 300px;
-  border: 2px solid #a1c4a0;
-  border-radius: 25px;
-  margin-bottom: 20px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 500px;
 }
 .map-wrapper {
   border: 2px solid black;
@@ -31,6 +25,7 @@
   width: 700px;
   height: 500px;
   margin-bottom: 20px;
+  margin-top: 20px;
 }
 .map {
   width: 100%;
