@@ -6,6 +6,8 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import '../styles/mapPage.css';
+import {Title, Input, Button, Flex} from '@mantine/core';
+import {Link} from 'react-router-dom';
 
 // Ustawienie domyślnych ikon Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -53,47 +55,57 @@ export default function MapPage() {
   }, []);
 
   return (
-    <div className="page-container">
-      <h1 className="title">TOURRENT</h1>
-      <input type="text" placeholder="🔍 Szukaj" className="search-bar" />
+    <Flex
+      mih={50}
+      bg="green.0"
+      gap="md"
+      justify="center"
+      align="center"
+      direction="column"
+      wrap="wrap"
+      className = "page-container">
+
+      <Title order={1} size={48}> TOURRENT </Title>
+      <Input size="md" radius="xl" placeholder="Wyszukaj" className = "search-bar"/>
+
       <div className="map-wrapper">
         <MapContainer center={[50.0413, 21.999]} zoom={13} className="map">
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap"
           />
-          {attractions.map((a, idx) => {
-          let icon;
-          switch (a.type) {
-            case "park":
-              icon = iconPark;
-              break;
-            case "pomnik":
-              icon = iconPomnik;
-              break;
-            case "muzeum":
-              icon = iconMuzeum;
-              break;
-            case "zabytek":
-            default:
-              icon = iconZabytek;
-              break;
-        }
+          { attractions.map((a, idx) => {
+            let icon;
+            switch (a.type) {
+              case "park":
+                icon = iconPark;
+                break;
+              case "pomnik":
+                icon = iconPomnik;
+                break;
+              case "muzeum":
+                icon = iconMuzeum;
+                break;
+              case "zabytek":
+              default:
+                icon = iconZabytek;
+                break;
+          }
 
-        return (
-          <Marker key={idx} position={[a.lat, a.lng]} icon={icon}>
-            <Popup>
-              <b>{a.name}</b><br />{a.description}
-            </Popup>
-          </Marker>
-          );
+          return (
+            <Marker key={idx} position={[a.lat, a.lng]} icon={icon}>
+              <Popup>
+                <b>{a.name}</b><br />{a.description}
+              </Popup>
+            </Marker>);
           })}
         </MapContainer>
       </div>
+
       <div className="tab-switch">
-        <button className="tab active">Mapa</button>
-        <button className="tab">Popularne</button>
+        <Link to='/'><Button variant="filled" size="lg" radius="xl" color="green.9">Mapa</Button></Link>
+        <Link to='/popular'><Button variant="filled" size="lg" radius="xl" color="green.9" onClick = "/popular">Popularne</Button></Link>
       </div>
-    </div>
+    </Flex>
 );
 }
