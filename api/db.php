@@ -22,6 +22,15 @@ function getPowiaty($pdo)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getPowiatIDFromName($pdo, $data)
+{
+    $stmt = $pdo->prepare("SELECT id FROM powiaty WHERE powiat = :powiat");
+    $stmt->execute([
+        ':powiat' => $data['powiat'],
+    ]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 function getZdjecia($pdo)
 {
     $stmt = $pdo->query("SELECT * FROM zdjecia");
