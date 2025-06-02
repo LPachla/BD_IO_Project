@@ -55,3 +55,4 @@ export {
     insertAtrakcje,
     deleteAtrakcje
 };
+
