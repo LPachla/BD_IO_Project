@@ -8,6 +8,7 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import '../styles/mapPage.css';
 import {Title, Input, Button, Flex} from '@mantine/core';
 import {Link} from 'react-router-dom';
+import {getAtrakcje} from '../fetchAPI'
 
 // Ustawienie domyślnych ikon Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -49,9 +50,26 @@ export default function MapPage() {
   const [attractions, setAttractions] = useState([]);
 
   useEffect(() => {
-    fetch('/attractions.json')
-      .then(res => res.json())
-      .then(data => setAttractions(data));
+    const fetchAttractions = async () => {
+      try {
+        const data = await getAtrakcje();
+	  const formattedData = data.map(item => ({
+          id: item.id,
+          name: item.nazwa,
+          description: item.opis,
+          type: "zabytek",
+          lat: item.lokalizacjay,
+          lng: item.lokalizacjax
+        }));
+        
+        setAttractions(formattedData);
+      } catch (err) {
+        console.error('Błąd pobierania danych:', err);
+        setError('Nie udało się załadować atrakcji');
+      }
+    };
+
+    fetchAttractions();
   }, []);
 
   return (

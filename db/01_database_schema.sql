@@ -18,26 +18,3 @@ CREATE TABLE zdjecia(
     atrakcja INT references atrakcje(id),
     zdjecia TEXT
 );
-
-INSERT INTO powiaty(powiat) VALUES 
-('bieszczadzki'),
-('brzozowski'),
-('dębicki'),
-('jarosławski'),
-('jasielski'),
-('kolbuszowski'),
-('krośnieński'),
-('leski'),
-('leżajski'),
-('lubaczowski'),
-('łańcucki'),
-('mielecki'),
-('niżański'),
-('przemyski'),
-('przeworski'),
-('ropczycko-sędziszowski'),
-('rzeszowski'),
-('sanocki'),
-('stalowowolski'),
-('strzyżowski'),
-('tarnobrzeski');
