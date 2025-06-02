@@ -8,26 +8,36 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
-       if (isset($_GET['action'])) {
-        switch ($_GET['action']) {
-            case 'powiaty':
-                $result = getPowiaty($pdo);
-                echo json_encode($result);
-                break;
+        if (isset($_GET['action'])) {
+            switch ($_GET['action']) {
+                case 'powiaty':
+                    $result = getPowiaty($pdo);
+                    echo json_encode($result);
+                    break;
 
-            case 'atrakcje':
-                $result = getAtrakcje($pdo);
-                echo json_encode($result);
-                break;
-            
-            case 'zdjecia':
-                $result = getZdjecia($pdo);
-                echo json_encode($result);
-                break;
+                case 'atrakcje':
+                    $result = getAtrakcje($pdo);
+                    echo json_encode($result);
+                    break;
 
-            default:
-                echo json_encode(['error' => 'Unknown action']);
-        }
+                case 'zdjecia':
+                    $result = getZdjecia($pdo);
+                    echo json_encode($result);
+                    break;
+
+                case 'getPowiatIDFromName':
+                    if (isset($_GET['powiat'])) {
+                        $data = ['powiat' => $_GET['powiat']];
+                        $result = getPowiatIDFromName($pdo, $data);
+                        echo json_encode($result);
+                    } else {
+                        echo json_encode(['error' => 'Invalid input']);
+                    }
+                    break;
+
+                default:
+                    echo json_encode(['error' => 'Unknown action']);
+            }
         } else {
             echo json_encode(['error' => 'No parametr "action"']);
         }
@@ -35,7 +45,7 @@ switch ($method) {
 
     case 'POST':
         $data = json_decode(file_get_contents('php://input'), true);
-        if ($data) {
+        if ($data && isset($data['nazwa'], $data['powiat_id'])) {
             $id = insertAtrakcje($pdo, $data);
             echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
         } else {
