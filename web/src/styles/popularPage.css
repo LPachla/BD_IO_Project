@@ -1,16 +1,24 @@
 .popular-page-container {
   background: #f1faee;
   min-height: 100vh;
-  padding: 40px 0;
+  padding: 40px;
   font-family: 'Georgia', serif;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* wyśrodkowanie w pionie */
+  align-items: center;     /* wyśrodkowanie w poziomie */
 }
+
 
 .popular-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* elastyczna siatka */
   gap: 32px;
-  max-width: 1200px;
-  margin: 0 auto 40px auto;
+  width: 100%;
+  max-width: 1100px;
+  justify-items: center; /* wyśrodkowanie kart w kolumnie */
+  margin-bottom: 40px;
 }
 
 .popular-card {
@@ -20,6 +28,8 @@
   box-shadow: 0 2px 12px 0 #0001;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 320px;
   height: 100%;
 }
 

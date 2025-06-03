@@ -72,13 +72,14 @@
 
 .details-bottom-row {
   display: flex;
-  align-items: center;
-  gap: 40px;
+  justify-content: center;
+  gap: 0;
 }
 
+
 .details-map {
-  width: 520px;
-  height: 300px;
+  width: 600px;
+  height: 400px;
   border-radius: 10px;
   box-shadow: 0 1.5px 5px #0001;
   overflow: hidden;
