@@ -9,6 +9,29 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mantine/core';
 import '../styles/detailsPage.css';
 import { getAtrakcje } from '../fetchAPI';
+import { useMap } from 'react-leaflet';
+
+function MapFocus({ lat, lng }) {
+  const map = useMap();
+
+  useEffect(() => {
+    // Centrowanie na współrzędnych
+    map.setView([lat, lng], 15, { animate: true });
+
+    // Po krótkim opóźnieniu wymuszamy przeliczenie rozmiaru mapy
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 300);
+  }, [lat, lng, map]);
+
+  return null;
+}
+
+
+function truncate(text, maxLength) {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + '...';
+}
 
 // Ustawienie domyślnych ikon Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -122,9 +145,12 @@ export default function DetailsPage() {
           />
           <div style={{ flex: 1 }}>
             <h2 className="details-title">{attraction.name}</h2>
-            <p className="details-desc">{attraction.description}</p>
+            <p className="details-desc">
+              {truncate(attraction.description, 120)}
+            </p>
           </div>
         </div>
+
 
         <hr className="details-divider" />
 
@@ -133,16 +159,21 @@ export default function DetailsPage() {
             <MapContainer
               center={[attraction.lat, attraction.lng]}
               zoom={15}
-              style={{ width: '100%', height: '100%', borderRadius: '10px' }}
+              style={{ width: '100%', height: '100%' }}
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; OpenStreetMap"
               />
+              <MapFocus lat={attraction.lat} lng={attraction.lng} />
               <Marker position={[attraction.lat, attraction.lng]} icon={icon} />
             </MapContainer>
           </div>
-        </div>
+          <div className="details-long-desc">
+        <p>{attraction.description}</p>
+  </div>
+</div>
+
       </div>
 
       {/* Dolny pasek */}

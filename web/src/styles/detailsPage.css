@@ -61,6 +61,7 @@
   line-height: 1.8;
   font-size: 1.25rem;
   color: #444;
+  text-align: justify;
 }
 
 .details-divider {
@@ -72,24 +73,27 @@
 
 .details-bottom-row {
   display: flex;
-  justify-content: center;
-  gap: 0;
+  align-items: center; 
+  gap: 40px;
+  margin-top: 40px;
 }
 
 
 .details-map {
-  width: 600px;
-  height: 400px;
+  width: 520px;
+  height: 300px;
   border-radius: 10px;
   box-shadow: 0 1.5px 5px #0001;
   overflow: hidden;
 }
+
 
 .details-long-desc {
   flex: 1;
   line-height: 1.8;
   font-size: 1.25rem;
   color: #333;
+  text-align: justify;
 }
 
 .details-bottom-bar {
