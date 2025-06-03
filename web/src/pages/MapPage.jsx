@@ -111,7 +111,7 @@ export default function MapPage() {
           }
 
           return (
-            <Marker key={idx} position={[a.lat,a.lng]} icon={icon}>
+            <Marker key={idx} position={[a.lat, a.lng]} icon={icon}>
               <Popup>
                 <b>{a.name}</b><br />{a.description}
               </Popup>
@@ -120,10 +120,52 @@ export default function MapPage() {
         </MapContainer>
       </div>
 
-      <div className="tab-switch">
-        <Link to='/'><Button variant="filled" size="lg" radius="xl" color="green.9">Mapa</Button></Link>
-        <Link to='/popular'><Button variant="filled" size="lg" radius="xl" color="green.9" onClick = "/popular">Popularne</Button></Link>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: '32px'
+      }}>
+        <div style={{
+          display: 'flex',
+          borderRadius: '9999px',
+          overflow: 'hidden',
+          background: '#fff',
+          border: '1px solid #c4e6c6',
+          minWidth: 360 // stała szerokość dla dwóch przycisków
+        }}>
+          <Link to="/" style={{ textDecoration: 'none', flex: 1 }}>
+            <button style={{
+              width: 180,
+              padding: '10px 0',
+              border: 'none',
+              background: '#eaf7ea',
+              color: '#1d6f3e',
+              fontWeight: 600,
+              fontSize: '1rem',
+              cursor: 'pointer',
+              outline: 'none'
+            }}>
+              Mapa
+            </button>
+          </Link>
+          <Link to="/popular" style={{ textDecoration: 'none', flex: 1 }}>
+            <button style={{
+              width: 180,
+              padding: '10px 0',
+              border: 'none',
+              background: '#fff',
+              color: '#222',
+              fontWeight: 500,
+              fontSize: '1rem',
+              cursor: 'pointer',
+              outline: 'none'
+            }}>
+              Popularne
+            </button>
+          </Link>
+        </div>
       </div>
+
     </Flex>
 );
 }
