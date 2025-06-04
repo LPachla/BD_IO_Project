@@ -1,6 +1,3 @@
-
-
-/* Ukrycie podpisu Leaflet */
 .leaflet-control-attribution {
   display: none;
 }
@@ -79,7 +76,7 @@
   display: flex;
   flex-direction: column;
   font-family: 'Georgia', serif;
-  overflow: hidden !important;  /* <- KLUCZOWE */
+  overflow: hidden !important;
 }
 
 
@@ -103,8 +100,8 @@
 .drawer-image {
   margin: 12px auto 24px auto;
   border-radius: 8px;
-  max-height: 25vh;           /* niższe zdjęcie */
-  max-width: 90%;             /* mniej niż pełna szerokość */
+  max-height: 25vh;
+  max-width: 90%;
   object-fit: cover;
   display: block;
 }
@@ -120,7 +117,7 @@
 }
 
 .drawer-body::-webkit-scrollbar {
-  width: 0px;                         /* Chrome, Edge, Safari */
+  width: 0px;
   background: transparent;
 }
 
