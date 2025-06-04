@@ -111,7 +111,7 @@ export default function MapPage() {
       <Input
         size="md"
         radius="xl"
-        placeholder="Wyszukaj miejsce"
+        placeholder="Wyszukaj miejsce..."
         style={{ width: '700px' }}
         value={searchTerm}
         onChange={(event) => setSearchTerm(event.currentTarget.value)}
