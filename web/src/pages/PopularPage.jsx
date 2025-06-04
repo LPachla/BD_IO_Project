@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import '../styles/popularPage.css';
-import { getAtrakcje } from '../fetchAPI';
+import { getAtrakcje, getZdjecia } from '../fetchAPI';
 
 // Funkcja skracająca tekst do określonej długości
 function truncate(text, maxLength) {
@@ -17,7 +17,8 @@ export default function PopularPage() {
     async function fetchData() {
       try {
         const data = await getAtrakcje();
-
+        const imageData = await getZdjecia();
+        console.log(imageData);
         const mapped = data
           .sort((a, b) => b.ocena - a.ocena) // sortuj po ocenie malejąco
           .slice(0, 6) // weź tylko top 6
@@ -25,7 +26,7 @@ export default function PopularPage() {
             id: item.id,
             name: item.nazwa,
             description: item.opis,
-            image: `/images/${item.nazwa.toLowerCase().replace(/\s/g, '')}.jpg`
+            image: `/images/${imageData.find(img => img.atrakcja == item.id).zdjecia}.jpg`
           }));
 
         setAttractions(mapped);
