@@ -84,9 +84,8 @@ export default function MapPage() {
     if (!phrase) return true;
 
     const inName = a.name.toLowerCase().includes(phrase);
-    const inDesc = a.description.toLowerCase().includes(phrase);
 
-    return inName || inDesc;
+    return inName;
   });
 
   const handleMarkerClick = (attraction) => {
@@ -145,10 +144,28 @@ export default function MapPage() {
           }
 
           return (
-            <Marker key={idx} position={[a.lat, a.lng]} icon={icon} eventHandlers={{
-                  click: () => handleMarkerClick(a),
-                }}>
-            </Marker>);
+            <Marker
+              key={idx}
+              position={[a.lat, a.lng]}
+              icon={icon}
+            >
+              <Popup maxWidth={250}>
+                <div style={{ fontFamily: 'Georgia, serif', textAlign: 'center'}}>
+                  <h3 style={{ fontSize: '10px', marginBottom: '4px' }}>{a.name}</h3>
+                  <img
+                    src={a.image}
+                    alt={a.name}
+                    style={{ width: '100%', borderRadius: '4px', marginBottom: '4px' }}
+                  />
+                  <Link to={`/details/${a.id}`}>
+                    <Button size="xs" color="green" radius="xl">
+                      Zobacz szczegóły
+                    </Button>
+                  </Link>
+                </div>
+              </Popup>
+            </Marker>
+              );
           })}
         </MapContainer>
       </div>
@@ -199,46 +216,7 @@ export default function MapPage() {
         </div>
       </div>
 
-      <Drawer
-  opened={drawerOpened}
-  onClose={closeDrawer}
-  padding={0}
-  offset={8}
-  radius="md"
-  size={`${DRAWER_WIDTH}px`}
-  withOverlay={false}
-  classNames={{
-    drawer: 'drawer-custom',
-    header: 'drawer-header',
-    title: 'drawer-title',
-    closeButton: 'drawer-close',
-  }}
-  title={selectedAttraction?.name}
->
-  {selectedAttraction && (
-    <div className="drawer-custom">
-      {selectedAttraction.image && (
-        <Image
-          src={selectedAttraction.image}
-          alt={selectedAttraction.name}
-          radius="md"
-          withPlaceholder
-          className="drawer-image"
-        />
-      )}
-      <div className="drawer-body">
-        <Text size="md">{selectedAttraction.description}</Text>
-        <div className="drawer-button-wrapper">
-          <Link to={`/details/${selectedAttraction.id}`}>
-            <Button color="green" radius="xl" size="md">
-              Zobacz szczegóły
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </div>
-  )}
-</Drawer>
+      
 
 
     </Flex>
