@@ -45,11 +45,12 @@ function getAtrakcje($pdo)
 
 function insertAtrakcje($pdo, $data)
 {
-    $stmt = $pdo->prepare("INSERT INTO atrakcje (nazwa, powiat, opis, lokalizacjaX, lokalizacjaY, ocena)
-                           VALUES (:nazwa, :powiat, :opis, :lokalizacjaX, :lokalizacjaY, :ocena)");
+    $stmt = $pdo->prepare("INSERT INTO atrakcje (nazwa, powiat, typ, opis, lokalizacjaX, lokalizacjaY, ocena)
+                           VALUES (:nazwa, :powiat, :typ, :opis, :lokalizacjaX, :lokalizacjaY, :ocena)");
     $stmt->execute([
         ':nazwa' => $data['nazwa'],
         ':powiat' => $data['powiat'],
+        ':typ' => $data['typ'],
         ':opis' => $data['opis'],
         ':lokalizacjaX' => $data['lokalizacjaX'],
         ':lokalizacjaY' => $data['lokalizacjaY'],
@@ -61,13 +62,14 @@ function insertAtrakcje($pdo, $data)
 function updateAtrakcje($pdo, $data)
 {
     $stmt = $pdo->prepare("UPDATE atrakcje SET
-        nazwa = :nazwa, powiat = :powiat, opis = :opis,
+        nazwa = :nazwa, powiat = :powiat, typ = :typ, opis = :opis,
         lokalizacjaX = :lokalizacjaX, lokalizacjaY = :lokalizacjaY, ocena = :ocena
         WHERE id = :id");
     $stmt->execute([
         ':id' => $data['id'],
         ':nazwa' => $data['nazwa'],
         ':powiat' => $data['powiat'],
+        ':typ' => $data['typ'],
         ':opis' => $data['opis'],
         ':lokalizacjaX' => $data['lokalizacjaX'],
         ':lokalizacjaY' => $data['lokalizacjaY'],
