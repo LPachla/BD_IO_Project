@@ -200,62 +200,47 @@ export default function MapPage() {
       </div>
 
       <Drawer
-        opened={drawerOpened}
-        onClose={closeDrawer}
-        padding={0}
-        offset={8} 
-        radius="md"
-        size={`${DRAWER_WIDTH}px`}
-        withOverlay={false}
-        styles={{
-          drawer: {
-            backgroundColor: '#D6E8CE',
-          },
-          header: {
-            backgroundColor: '#D6E8CE',
-            borderBottom: '2px solid #354a2c',
-            padding: 0,               
-          },
-          title: {
-            color: '#195b35',
-            fontFamily: 'Georgia, serif',
-            fontSize: '24px',
-            padding: '16px',          
-          },
-          closeButton: {
-            color: '#195b35',
-          },
-          body: {
-            backgroundColor: '#D6E8CE',
-            padding: 0,
-          },
-        }}
-        title={selectedAttraction?.name}>
-          {selectedAttraction && (
-            <div
-              style={{
-                height: '100%',              
-                overflowY: 'auto',           
-                backgroundColor: '#D6E8CE',  
-                padding: '16px',             
-                fontFamily: 'Georgia, serif',
-              }}
-            >
-              {selectedAttraction.image && (
-                <Image
-                  src={selectedAttraction.image}
-                  alt={selectedAttraction.name}
-                  radius="md"
-                  withPlaceholder
-                  style={{ marginBottom: 32, marginTop: 16 }}
-                />
-              )}
-              <Text size="md" >
-                {selectedAttraction.description}
-              </Text>
-            </div>
-          )}
-      </Drawer>
+  opened={drawerOpened}
+  onClose={closeDrawer}
+  padding={0}
+  offset={8}
+  radius="md"
+  size={`${DRAWER_WIDTH}px`}
+  withOverlay={false}
+  classNames={{
+    drawer: 'drawer-custom',
+    header: 'drawer-header',
+    title: 'drawer-title',
+    closeButton: 'drawer-close',
+  }}
+  title={selectedAttraction?.name}
+>
+  {selectedAttraction && (
+    <div className="drawer-custom">
+      {selectedAttraction.image && (
+        <Image
+          src={selectedAttraction.image}
+          alt={selectedAttraction.name}
+          radius="md"
+          withPlaceholder
+          className="drawer-image"
+        />
+      )}
+      <div className="drawer-body">
+        <Text size="md">{selectedAttraction.description}</Text>
+        <div className="drawer-button-wrapper">
+          <Link to={`/details/${selectedAttraction.id}`}>
+            <Button color="green" radius="xl" size="md">
+              Zobacz szczegóły
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )}
+</Drawer>
+
+
     </Flex>
 );
 }

@@ -34,9 +34,16 @@
   padding-bottom: 30px;
 }
 
-.details-top-row {
+/* .details-top-row {
   display: flex;
   align-items: center;
+  gap: 40px;
+  margin-bottom: 30px;
+} */
+.details-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
   gap: 40px;
   margin-bottom: 30px;
 }
@@ -133,4 +140,22 @@
 }
 .details-bottom-tabs button:hover {
   color: #195b35;
+}
+
+.details-title-centered {
+  text-align: center;
+  font-size: 2.8rem;
+  color: #195b35;
+  margin-bottom: 32px;
+  font-family: 'Georgia', serif;
+}
+
+.details-long-desc-wide {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-top: 20px;
+  font-size: 1.25rem;
+  line-height: 1.8;
+  text-align: justify;
+  color: #333;
 }
