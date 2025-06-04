@@ -99,7 +99,7 @@ export default function MapPage() {
         marginTop: '20px',
         marginBottom: '10px'
       }}>
-        <img src="/images/logo.png" alt="Logo" style={{ width: '100px', height: '100px' }} />
+        <img src="/logo.png" alt="Logo" style={{ width: '100px', height: '100px' }} />
         <h1 style={{
           fontSize: '42px',
           fontFamily: 'Georgia, serif',
