@@ -164,7 +164,7 @@ export default function MapPage() {
           overflow: 'hidden',
           background: '#fff',
           border: '1px solid #c4e6c6',
-          minWidth: 360 // stała szerokość dla dwóch przycisków
+          minWidth: 360 
         }}>
           <Link to="/" style={{ textDecoration: 'none', flex: 1 }}>
             <button style={{
@@ -202,7 +202,7 @@ export default function MapPage() {
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
-        padding="md"
+        padding={0}
         offset={8} 
         radius="md"
         size={`${DRAWER_WIDTH}px`}
@@ -213,36 +213,49 @@ export default function MapPage() {
           },
           header: {
             backgroundColor: '#D6E8CE',
-            borderBottom: '2px solid #2B4B38'
+            borderBottom: '2px solid #354a2c',
+            padding: 0,               
+          },
+          title: {
+            color: '#195b35',
+            fontFamily: 'Georgia, serif',
+            fontSize: '24px',
+            padding: '16px',          
           },
           closeButton: {
-            color: '#195b35'
+            color: '#195b35',
           },
-          title: { color: '#195b35', fontFamily: 'Georgia, serif', fontSize: '24px'},
           body: {
             backgroundColor: '#D6E8CE',
-            fontFamily: 'Georgia, serif',
-            padding: 12,     /* usuwamy wewnętrzny biały padding */
+            padding: 0,
           },
         }}
-        title={selectedAttraction?.name}
-      >
-        {selectedAttraction && (
-          <ScrollArea style={{ height: '100%' }} type="never">
-            {selectedAttraction.image && (
-              <Image
-                src={selectedAttraction.image}
-                alt={selectedAttraction.name}
-                radius="md"
-                withPlaceholder
-                style={{ marginBottom: 32, marginTop: 16 }}
-              />
-            )}
-            <Text size="md">{selectedAttraction.description}</Text>
-          </ScrollArea>
-        )}
+        title={selectedAttraction?.name}>
+          {selectedAttraction && (
+            <div
+              style={{
+                height: '100%',              
+                overflowY: 'auto',           
+                backgroundColor: '#D6E8CE',  
+                padding: '16px',             
+                fontFamily: 'Georgia, serif',
+              }}
+            >
+              {selectedAttraction.image && (
+                <Image
+                  src={selectedAttraction.image}
+                  alt={selectedAttraction.name}
+                  radius="md"
+                  withPlaceholder
+                  style={{ marginBottom: 32, marginTop: 16 }}
+                />
+              )}
+              <Text size="md" >
+                {selectedAttraction.description}
+              </Text>
+            </div>
+          )}
       </Drawer>
-
     </Flex>
 );
 }

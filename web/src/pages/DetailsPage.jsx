@@ -67,7 +67,6 @@ export default function DetailsPage() {
         const found = attractionsData.find(a => a.id == id);
         const foundImage = imagesData.find(img => img.atrakcja == id);
         if (found && foundImage) {
-          console.log(found)
           setAttraction({
             id: found.id,
             name: found.nazwa,
