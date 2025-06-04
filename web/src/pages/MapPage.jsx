@@ -84,9 +84,8 @@ export default function MapPage() {
     if (!phrase) return true;
 
     const inName = a.name.toLowerCase().includes(phrase);
-    const inDesc = a.description.toLowerCase().includes(phrase);
 
-    return inName || inDesc;
+    return inName;
   });
 
   const handleMarkerClick = (attraction) => {
@@ -145,10 +144,28 @@ export default function MapPage() {
           }
 
           return (
-            <Marker key={idx} position={[a.lat, a.lng]} icon={icon} eventHandlers={{
-                  click: () => handleMarkerClick(a),
-                }}>
-            </Marker>);
+            <Marker
+              key={idx}
+              position={[a.lat, a.lng]}
+              icon={icon}
+            >
+              <Popup maxWidth={250}>
+                <div style={{ fontFamily: 'Georgia, serif', textAlign: 'center'}}>
+                  <h3 style={{ fontSize: '10px', marginBottom: '4px' }}>{a.name}</h3>
+                  <img
+                    src={a.image}
+                    alt={a.name}
+                    style={{ width: '100%', borderRadius: '4px', marginBottom: '4px' }}
+                  />
+                  <Link to={`/details/${a.id}`}>
+                    <Button size="xs" color="green" radius="xl">
+                      Zobacz szczegóły
+                    </Button>
+                  </Link>
+                </div>
+              </Popup>
+            </Marker>
+              );
           })}
         </MapContainer>
       </div>
@@ -199,63 +216,9 @@ export default function MapPage() {
         </div>
       </div>
 
-      <Drawer
-        opened={drawerOpened}
-        onClose={closeDrawer}
-        padding={0}
-        offset={8} 
-        radius="md"
-        size={`${DRAWER_WIDTH}px`}
-        withOverlay={false}
-        styles={{
-          drawer: {
-            backgroundColor: '#D6E8CE',
-          },
-          header: {
-            backgroundColor: '#D6E8CE',
-            borderBottom: '2px solid #354a2c',
-            padding: 0,               
-          },
-          title: {
-            color: '#195b35',
-            fontFamily: 'Georgia, serif',
-            fontSize: '24px',
-            padding: '16px',          
-          },
-          closeButton: {
-            color: '#195b35',
-          },
-          body: {
-            backgroundColor: '#D6E8CE',
-            padding: 0,
-          },
-        }}
-        title={selectedAttraction?.name}>
-          {selectedAttraction && (
-            <div
-              style={{
-                height: '100%',              
-                overflowY: 'auto',           
-                backgroundColor: '#D6E8CE',  
-                padding: '16px',             
-                fontFamily: 'Georgia, serif',
-              }}
-            >
-              {selectedAttraction.image && (
-                <Image
-                  src={selectedAttraction.image}
-                  alt={selectedAttraction.name}
-                  radius="md"
-                  withPlaceholder
-                  style={{ marginBottom: 32, marginTop: 16 }}
-                />
-              )}
-              <Text size="md" >
-                {selectedAttraction.description}
-              </Text>
-            </div>
-          )}
-      </Drawer>
+      
+
+
     </Flex>
 );
 }
