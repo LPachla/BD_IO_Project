@@ -8,7 +8,7 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mantine/core';
 import '../styles/detailsPage.css';
-import { getAtrakcje } from '../fetchAPI';
+import { getAtrakcje, getZdjecia } from '../fetchAPI';
 import { useMap } from 'react-leaflet';
 
 function MapFocus({ lat, lng }) {
@@ -59,19 +59,23 @@ export default function DetailsPage() {
   useEffect(() => {
     async function fetchAttraction() {
       try {
-        const data = await getAtrakcje();
-        setAttractions(data);
+        const attractionsData = await getAtrakcje();
+        const imagesData = await getZdjecia();
+        console.log(attractionsData);
+        setAttractions(attractionsData);
 
-        const found = data.find(a => a.id == id);
-        if (found) {
+        const found = attractionsData.find(a => a.id == id);
+        const foundImage = imagesData.find(img => img.atrakcja == id);
+        if (found && foundImage) {
+          console.log(found)
           setAttraction({
             id: found.id,
             name: found.nazwa,
             description: found.opis,
-            type: 'zabytek', // jeśli masz typ w bazie – podmień
+            type: found.typ, // jeśli masz typ w bazie – podmień
             lat: parseFloat(found.lokalizacjay),
             lng: parseFloat(found.lokalizacjax),
-            image: `/images/${found.nazwa.toLowerCase().replace(/\s/g, '')}.jpg`,
+            image: `/images/${foundImage.zdjecia}.jpg`,
           });
         }
       } catch (err) {
