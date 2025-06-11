@@ -90,24 +90,6 @@ function deleteAtrakcje($pdo, $id)
     return $stmt->rowCount();
 }
 
-function loginUser($pdo, $data)
-{
-    $stmt = $pdo->prepare("SELECT id, email, password, role FROM users WHERE email = :email");
-    $stmt->execute([':email' => $data['email']]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($data['password'], $user['password'])) {
-        return $user;
-    } else {
-        return null;
-    }
-}
-
-function isAdmin($user)
-{
-    return $user['role'] === 'admin';
-}
-
 function updateUser($pdo, $data)
 {
     $stmt = $pdo->prepare("UPDATE users SET email = :email, password = :password, role = :role WHERE id = :id");

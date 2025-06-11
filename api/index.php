@@ -1,6 +1,8 @@
 <?php
 
-session_start();
+if (session_id() == '') {
+    session_start();
+}
 require_once 'db.php';
 require_once 'auth.php';
 header('Content-Type: application/json');
@@ -104,7 +106,7 @@ switch ($method) {
             switch ($_GET['action']) {
                 case 'updateUser':
                     $data = json_decode(file_get_contents('php://input'), true);
-                    if ($data && isset($data['id'], $data['login'], $data['password'])) {
+                    if ($data && isset($data['id'], $data['email'], $data['password'], $data['role'])) {
                         $count = updateUser($pdo, $data);
                         echo json_encode(['message' => 'User updated', 'rows_affected' => $count]);
                     } else {
