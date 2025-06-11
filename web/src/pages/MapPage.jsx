@@ -9,6 +9,8 @@ import '../styles/mapPage.css';
 import { Input, Button, Flex, Image } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import { getAtrakcje, getZdjecia } from '../fetchAPI';
+import { Select } from '@mantine/core';
+
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -46,6 +48,7 @@ const iconMuzeum = new L.Icon({
 });
 
 export default function MapPage() {
+  const [selectedType, setSelectedType] = useState('');
   const [attractions, setAttractions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
@@ -75,10 +78,13 @@ export default function MapPage() {
     fetchAttractions();
   }, []);
 
-  const filteredAttractions = attractions.filter(a => {
+    const filteredAttractions = attractions.filter(a => {
     const phrase = searchTerm.trim().toLowerCase();
-    return a.name.toLowerCase().includes(phrase);
+    const matchesSearch = a.name.toLowerCase().includes(phrase);
+    const matchesType = selectedType ? a.type === selectedType : true;
+    return matchesSearch && matchesType;
   });
+
 
   return (
     <Flex
@@ -108,15 +114,38 @@ export default function MapPage() {
         }}>MapCarpatia</h1>
       </div>
 
-      <Input
-        size="md"
-        radius="xl"
-        placeholder="Wyszukaj miejsce..."
-        style={{ width: '700px' }}
-        value={searchTerm}
-        onChange={(event) => setSearchTerm(event.currentTarget.value)}
-      />
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '10px' }}>
+        <Input
+          size="md"
+          radius="xl"
+          placeholder="Wyszukaj miejsce..."
+          style={{ width: '500px' }}
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.currentTarget.value)}
+          leftSection={<img src="/icons/search.svg" alt="search" className="input-icon" />}
+        />
 
+        <Select
+          placeholder="Typ atrakcji"
+          size="md"
+          radius="xl"
+          data={[
+            { value: '', label: 'Wszystkie' },
+            { value: 'zabytek', label: 'Zabytek' },
+            { value: 'park', label: 'Park' },
+            { value: 'pomnik', label: 'Pomnik' },
+            { value: 'muzeum', label: 'Muzeum' },
+          ]}
+          value={selectedType}
+          onChange={setSelectedType}
+          style={{ width: '200px', zIndex: 1000 }}  
+          allowDeselect
+          clearable
+        />
+
+      </div>
+
+          
       <div className="map-wrapper">
         <MapContainer center={[50.0413, 21.999]} zoom={13} className="map">
           <TileLayer
@@ -173,7 +202,6 @@ export default function MapPage() {
           border: '1px solid #c4e6c6',
           minWidth: 360
         }}>
-          <Link to="/" style={{ textDecoration: 'none', flex: 1 }}>
             <button style={{
               width: 180,
               padding: '10px 0',
@@ -187,7 +215,6 @@ export default function MapPage() {
             }}>
               Mapa
             </button>
-          </Link>
           <Link to="/popular" style={{ textDecoration: 'none', flex: 1 }}>
             <button style={{
               width: 180,

@@ -39,6 +39,7 @@ export default function PopularPage() {
 
   return (
     <div className="popular-page-container">
+      <h2 className="popular-title">Popularne atrakcje</h2>
       <div className="popular-grid">
         {attractions.map(attraction => (
           <div key={attraction.id} className="popular-card">
@@ -68,8 +69,8 @@ export default function PopularPage() {
 
       <div className="bottom-tabs-row">
         <div className="bottom-tabs">
-          <Link to="/"><button>Mapa</button></Link>
-          <Link to="/popular"><button className="selected">Popularne</button></Link>
+          <Link to="/map"><button>Mapa</button></Link>
+          <button className="selected">Popularne</button>
         </div>
       </div>
     </div>

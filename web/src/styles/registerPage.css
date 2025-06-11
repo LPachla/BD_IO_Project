@@ -1,0 +1,47 @@
+.register-container {
+  height: 100vh;
+  background-color: #f1faed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.register-logo {
+  width: 80px;
+  height: 80px;
+}
+
+.register-title {
+  font-family: Georgia, serif;
+  color: #195b35;
+  font-weight: bold;
+}
+
+.register-form {
+  background-color: #ffffff;
+  border: 1px solid #c4e6c6;
+  min-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.register-subtitle {
+  text-align: center;
+  font-family: Georgia, serif;
+  color: #195b35;
+}
+
+.input-icon {
+  width: 18px;
+  height: 18px;
+  filter: invert(36%) sepia(17%) saturate(1056%) hue-rotate(78deg) brightness(93%) contrast(92%); 
+}

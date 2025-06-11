@@ -9,6 +9,9 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mantine/core';
 import '../styles/detailsPage.css';
 import { getAtrakcje, getZdjecia } from '../fetchAPI';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+
 
 function MapFocus({ lat, lng }) {
   const map = useMap();
@@ -102,7 +105,7 @@ export default function DetailsPage() {
         <Button
           className="details-arrow-btn left"
           variant="outline"
-          color="green"
+          color="#195b35"
           size="lg"
           radius="xl"
           onClick={() => navigate(`/details/${prevAttraction.id}`)}
@@ -115,7 +118,7 @@ export default function DetailsPage() {
         <Button
           className="details-arrow-btn right"
           variant="outline"
-          color="green"
+          color="#195b35"
           size="lg"
           radius="xl"
           onClick={() => navigate(`/details/${nextAttraction.id}`)}
@@ -129,7 +132,7 @@ export default function DetailsPage() {
         <h2 className="details-title-centered">{attraction.name}</h2>
 
         <div className="details-top-row">
-          <img className="details-img" src={attraction.image} alt={attraction.name} />
+          <Zoom><img className="details-img" src={attraction.image} alt={attraction.name} /></Zoom>
           <div className="details-map">
             <MapContainer
               center={[attraction.lat, attraction.lng]}
@@ -155,7 +158,7 @@ export default function DetailsPage() {
 
       <div className="details-bottom-bar">
         <div className="details-bottom-tabs">
-          <Link to="/"><button>Mapa</button></Link>
+          <Link to="/map"><button>Mapa</button></Link>
           <Link to="/popular"><button>Popularne</button></Link>
         </div>
       </div>
