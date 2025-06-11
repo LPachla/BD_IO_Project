@@ -92,8 +92,8 @@ function deleteAtrakcje($pdo, $id)
 
 function loginUser($pdo, $data)
 {
-    $stmt = $pdo->prepare("SELECT id, username, password, role FROM users WHERE username = :username");
-    $stmt->execute([':username' => $data['username']]);
+    $stmt = $pdo->prepare("SELECT id, email, password, role FROM users WHERE email = :email");
+    $stmt->execute([':email' => $data['email']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($data['password'], $user['password'])) {
@@ -110,10 +110,10 @@ function isAdmin($user)
 
 function updateUser($pdo, $data)
 {
-    $stmt = $pdo->prepare("UPDATE users SET username = :username, password = :password, role = :role WHERE id = :id");
+    $stmt = $pdo->prepare("UPDATE users SET email = :email, password = :password, role = :role WHERE id = :id");
     $stmt->execute([
         ':id' => $data['id'],
-        ':username' => $data['username'],
+        ':email' => $data['email'],
         ':password' => password_hash($data['password'], PASSWORD_BCRYPT),
         ':role' => $data['role']
     ]);
@@ -125,4 +125,29 @@ function deleteUser($pdo, $id)
     $stmt = $pdo->prepare("DELETE FROM users WHERE id = :id");
     $stmt->execute([':id' => $id]);
     return $stmt->rowCount();
+}
+
+function createUser($pdo, $data)
+{
+    if (!isset($data['imie'], $data['nazwisko'], $data['email'], $data['password'])) {
+        return ['error' => 'Missing required fields'];
+    }
+
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+    $stmt->execute([':email' => $data['email']]);
+    if ($stmt->fetchColumn() > 0) {
+        return ['error' => 'User already exists'];
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO users (email, password, role, imie, nazwisko)
+                           VALUES (:email, :password, 'user', :imie, :nazwisko)");
+
+    $stmt->execute([
+        ':email' => $data['email'],
+        ':password' => password_hash($data['password'], PASSWORD_BCRYPT),
+        ':imie' => $data['imie'],
+        ':nazwisko' => $data['nazwisko']
+    ]);
+
+    return ['message' => 'User created successfully', 'user_id' => $pdo->lastInsertId()];
 }

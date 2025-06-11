@@ -1,50 +1,39 @@
 <?php
 
 require_once 'db.php';
-header('Content-Type: application/json');
 
 $pdo = connectDB();
 $method = $_SERVER['REQUEST_METHOD'];
 
-function loginUser(PDO $db, string $login, string $password): bool
+function loginUser($pdo, $email, $password)
 {
-    $stmt = $db->prepare('SELECT id, password_hash, is_admin FROM users WHERE login = :login');
-    $stmt->execute([':login' => $login]);
+    $stmt = $pdo->prepare("SELECT id, email, password, role FROM users WHERE email = :email");
+    $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$user) return false;
 
-    if (password_verify($password, $user['password_hash'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['is_admin'] = (bool)$user['is_admin'];
-        return true;
+    if ($user && password_verify($password, $user['password'])) {
+        return $user;
     }
-    return false;
+    return null;
 }
 
-function userExists(PDO $db, string $login): bool
+function isAdmin($user)
 {
-    $stmt = $db->prepare('SELECT COUNT(*) FROM users WHERE login = :login');
-    $stmt->execute([':login' => $login]);
-    return $stmt->fetchColumn() > 0;
+    return isset($user['role']) && $user['role'] === 'admin';
 }
 
-function isLoggedIn(): bool
+function isLoggedIn()
 {
     return isset($_SESSION['user_id']);
 }
 
-function isAdmin(): bool
-{
-    return isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
-}
-
-function logoutUser(): void
+function logoutUser()
 {
     session_unset();
     session_destroy();
 }
 
-function getUserData(): array
+function getUserData()
 {
     return [
         'user_id' => $_SESSION['user_id'] ?? null,

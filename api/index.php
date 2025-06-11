@@ -50,20 +50,20 @@ switch ($method) {
         if (isset($_GET['action'])) {
             switch ($_GET['action']) {
                 case 'login':
-                    if (isset($data['username'], $data['password'])) {
-                        $user = loginUser($pdo, $data['username'], $data['password']);
+                    if (isset($data['email'], $data['password'])) {
+                        $user = loginUser($pdo, $data['email'], $data['password']);
                         if ($user) {
                             echo json_encode(['message' => 'Login successful']);
                         } else {
-                            echo json_encode(['error' => 'Invalid username or password']);
+                            echo json_encode(['error' => 'Invalid email or password']);
                         }
                     } else {
-                        echo json_encode(['error' => 'Username and password are required']);
+                        echo json_encode(['error' => 'Email and password are required']);
                     }
                     break;
 
                 case 'insertAtrakcje':
-                    if (isLoggedIn() && isAdmin()) {
+                    if (isLoggedIn() && isAdmin($user)) {
                         if (isset($data['nazwa'], $data['powiat_id'])) {
                             $id = insertAtrakcje($pdo, $data, $user);
                             echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
@@ -73,6 +73,10 @@ switch ($method) {
                     } else {
                         echo json_encode(['error' => 'Permission denied, only admin can add attractions']);
                     }
+                    break;
+                case 'createUser':
+                    $result = createUser($pdo, $data);
+                    echo json_encode($result);
                     break;
 
                 default:

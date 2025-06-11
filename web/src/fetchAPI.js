@@ -23,8 +23,8 @@ export async function fetchApi(action, method = "GET", body = null, queryParams 
     }
 }
 
-async function login(username, password) {
-    const data = { username, password };
+async function login(email, password) {
+    const data = { email, password };
     const response = await fetchApi("login", "POST", data);
     if (response && response.error) {
         return { error: response.error };
@@ -70,6 +70,10 @@ async function updateUser(data) {
 async function deleteUser(data) {
     return await fetchApi("deleteUser", "DELETE", data);
 }
+
+async function createUser(data) {
+    return await fetchApi("createUser", "POST", data);
+}
 export {
     getPowiaty,
     getPowiatIDFromName,
@@ -81,4 +85,5 @@ export {
     isAdmin,
     updateUser,
     deleteUser,
+    createUser
 };
