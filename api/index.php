@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 require_once 'db.php';
 require_once 'auth.php';
 header('Content-Type: application/json');
@@ -35,6 +36,10 @@ switch ($method) {
                         echo json_encode(['error' => 'Invalid input']);
                     }
                     break;
+                case 'getUser':
+                    $result = getUserData();
+                    echo json_encode($result);
+                    break;
 
                 default:
                     echo json_encode(['error' => 'Unknown action']);
@@ -53,7 +58,9 @@ switch ($method) {
                     if (isset($data['email'], $data['password'])) {
                         $user = loginUser($pdo, $data['email'], $data['password']);
                         if ($user) {
-                            echo json_encode(['message' => 'Login successful']);
+                            $_SESSION['user_id'] = $user['id'];
+                            $_SESSION['is_admin'] = $user['role'] === 'admin';
+                            echo json_encode(['message' => 'Login successful', 'user' => $user]);
                         } else {
                             echo json_encode(['error' => 'Invalid email or password']);
                         }
@@ -78,6 +85,11 @@ switch ($method) {
                     $result = createUser($pdo, $data);
                     echo json_encode($result);
                     break;
+                case 'logout':
+                    logoutUser();
+                    echo json_encode(['message' => 'Logged out']);
+                    break;
+
 
                 default:
                     echo json_encode(['error' => 'Unknown action']);

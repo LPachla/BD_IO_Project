@@ -74,6 +74,14 @@ async function deleteUser(data) {
 async function createUser(data) {
     return await fetchApi("createUser", "POST", data);
 }
+
+async function getUser() {
+    return await fetchApi("getUser", "GET");
+}
+
+async function logout() {
+    return await fetchApi("logout", "POST");
+}
 export {
     getPowiaty,
     getPowiatIDFromName,
@@ -85,5 +93,7 @@ export {
     isAdmin,
     updateUser,
     deleteUser,
-    createUser
+    createUser,
+    getUser,
+    logout
 };
