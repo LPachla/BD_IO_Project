@@ -43,8 +43,12 @@ function getAtrakcje($pdo)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function insertAtrakcje($pdo, $data)
+function insertAtrakcje($pdo, $data, $user)
 {
+    if (!isAdmin($user)) {
+        return null;
+    }
+
     $stmt = $pdo->prepare("INSERT INTO atrakcje (nazwa, powiat, typ, opis, lokalizacjaX, lokalizacjaY, ocena)
                            VALUES (:nazwa, :powiat, :typ, :opis, :lokalizacjaX, :lokalizacjaY, :ocena)");
     $stmt->execute([
@@ -58,6 +62,7 @@ function insertAtrakcje($pdo, $data)
     ]);
     return $pdo->lastInsertId();
 }
+
 
 function updateAtrakcje($pdo, $data)
 {
@@ -81,6 +86,43 @@ function updateAtrakcje($pdo, $data)
 function deleteAtrakcje($pdo, $id)
 {
     $stmt = $pdo->prepare("DELETE FROM atrakcje WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    return $stmt->rowCount();
+}
+
+function loginUser($pdo, $data)
+{
+    $stmt = $pdo->prepare("SELECT id, username, password, role FROM users WHERE username = :username");
+    $stmt->execute([':username' => $data['username']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($data['password'], $user['password'])) {
+        return $user;
+    } else {
+        return null;
+    }
+}
+
+function isAdmin($user)
+{
+    return $user['role'] === 'admin';
+}
+
+function updateUser($pdo, $data)
+{
+    $stmt = $pdo->prepare("UPDATE users SET username = :username, password = :password, role = :role WHERE id = :id");
+    $stmt->execute([
+        ':id' => $data['id'],
+        ':username' => $data['username'],
+        ':password' => password_hash($data['password'], PASSWORD_BCRYPT),
+        ':role' => $data['role']
+    ]);
+    return $stmt->rowCount();
+}
+
+function deleteUser($pdo, $id)
+{
+    $stmt = $pdo->prepare("DELETE FROM users WHERE id = :id");
     $stmt->execute([':id' => $id]);
     return $stmt->rowCount();
 }

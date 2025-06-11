@@ -1,6 +1,7 @@
 <?php
 
 require_once 'db.php';
+require_once 'auth.php';
 header('Content-Type: application/json');
 
 $pdo = connectDB();
@@ -39,37 +40,88 @@ switch ($method) {
                     echo json_encode(['error' => 'Unknown action']);
             }
         } else {
-            echo json_encode(['error' => 'No parametr "action"']);
+            echo json_encode(['error' => 'No parameter "action"']);
         }
         break;
 
     case 'POST':
         $data = json_decode(file_get_contents('php://input'), true);
-        if ($data && isset($data['nazwa'], $data['powiat_id'])) {
-            $id = insertAtrakcje($pdo, $data);
-            echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
+
+        if (isset($_GET['action'])) {
+            switch ($_GET['action']) {
+                case 'login':
+                    if (isset($data['username'], $data['password'])) {
+                        $user = loginUser($pdo, $data['username'], $data['password']);
+                        if ($user) {
+                            echo json_encode(['message' => 'Login successful']);
+                        } else {
+                            echo json_encode(['error' => 'Invalid username or password']);
+                        }
+                    } else {
+                        echo json_encode(['error' => 'Username and password are required']);
+                    }
+                    break;
+
+                case 'insertAtrakcje':
+                    if (isLoggedIn() && isAdmin()) {
+                        if (isset($data['nazwa'], $data['powiat_id'])) {
+                            $id = insertAtrakcje($pdo, $data, $user);
+                            echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
+                        } else {
+                            echo json_encode(['error' => 'Invalid input']);
+                        }
+                    } else {
+                        echo json_encode(['error' => 'Permission denied, only admin can add attractions']);
+                    }
+                    break;
+
+                default:
+                    echo json_encode(['error' => 'Unknown action']);
+            }
         } else {
-            echo json_encode(['error' => 'Invalid input']);
+            echo json_encode(['error' => 'No action specified']);
         }
         break;
 
     case 'PUT':
-        $data = json_decode(file_get_contents('php://input'), true);
-        if ($data && isset($data['id'])) {
-            $count = updateAtrakcje($pdo, $data);
-            echo json_encode(['message' => 'Updated Attraction', 'rows_affected' => $count]);
+        if (isset($_GET['action'])) {
+            switch ($_GET['action']) {
+                case 'updateUser':
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    if ($data && isset($data['id'], $data['login'], $data['password'])) {
+                        $count = updateUser($pdo, $data);
+                        echo json_encode(['message' => 'User updated', 'rows_affected' => $count]);
+                    } else {
+                        echo json_encode(['error' => 'Invalid input']);
+                    }
+                    break;
+
+                default:
+                    echo json_encode(['error' => 'Unknown action']);
+            }
         } else {
-            echo json_encode(['error' => 'Invalid input']);
+            echo json_encode(['error' => 'No action specified']);
         }
         break;
 
     case 'DELETE':
-        $data = json_decode(file_get_contents('php://input'), true);
-        if ($data && isset($data['id'])) {
-            $count = deleteAtrakcje($pdo, $data['id']);
-            echo json_encode(['message' => 'Deleted Attraction', 'rows_affected' => $count]);
+        if (isset($_GET['action'])) {
+            switch ($_GET['action']) {
+                case 'deleteUser':
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    if ($data && isset($data['id'])) {
+                        $count = deleteUser($pdo, $data['id']);
+                        echo json_encode(['message' => 'User deleted', 'rows_affected' => $count]);
+                    } else {
+                        echo json_encode(['error' => 'Invalid input']);
+                    }
+                    break;
+
+                default:
+                    echo json_encode(['error' => 'Unknown action']);
+            }
         } else {
-            echo json_encode(['error' => 'Invalid input']);
+            echo json_encode(['error' => 'No action specified']);
         }
         break;
 
