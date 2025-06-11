@@ -72,7 +72,7 @@ switch ($method) {
                     break;
 
                 case 'insertAtrakcje':
-                    if (isLoggedIn() && isAdmin($user)) {
+                    if (isLoggedIn() && isset($user) && isAdmin($user)) {
                         if (isset($data['nazwa'], $data['powiat_id'])) {
                             $id = insertAtrakcje($pdo, $data, $user);
                             echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
