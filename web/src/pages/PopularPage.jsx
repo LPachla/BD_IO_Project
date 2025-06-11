@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import '../styles/popularPage.css';
 import { getAtrakcje, getZdjecia } from '../fetchAPI';
 
-// Funkcja skracająca tekst do określonej długości
 function truncate(text, maxLength) {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + '...';
@@ -20,8 +19,8 @@ export default function PopularPage() {
         const imageData = await getZdjecia();
         console.log(imageData);
         const mapped = data
-          .sort((a, b) => b.ocena - a.ocena) // sortuj po ocenie malejąco
-          .slice(0, 6) // weź tylko top 6
+          .sort((a, b) => b.ocena - a.ocena)
+          .slice(0, 6)
           .map(item => ({
             id: item.id,
             name: item.nazwa,
@@ -56,7 +55,7 @@ export default function PopularPage() {
               <Button
                 fullWidth
                 radius="xl"
-                color="green"
+                color='#195b35'
                 component={Link}
                 to={`/details/${attraction.id}`}
               >
