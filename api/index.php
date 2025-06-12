@@ -92,7 +92,7 @@ switch ($method) {
                             $id = insertAtrakcje($pdo, $data);
                             echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
                         } else {
-                            echo json_encode(['error' => 'Invalid input']);echo json_encode(['error' => 'Missing input data: ' . implode(', ', $missing)]);
+                            echo json_encode(['error' => 'Missing input data: ' . implode(', ', $missing)]);
                         }
                     } else {
                         echo json_encode(['error' => 'Permission denied, only admin can add attractions']);
