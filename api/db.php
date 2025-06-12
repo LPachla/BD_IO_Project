@@ -37,6 +37,18 @@ function getZdjecia($pdo)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function deleteZdjecia($pdo, $id) {
+    if(!isLoggedIn()){
+        return ['error' => 'Not logged in'];
+    }
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        return ['error' => 'Only admin can insert atrakcje'];
+    }
+    $stmt = $pdo->prepare("DELETE FROM zdjecia WHERE atrakcja = :id");
+    $stmt->execute([':id' => $id]);
+    return $stmt->rowCount();
+}
+
 function getAtrakcje($pdo)
 {
     $stmt = $pdo->query("SELECT * FROM atrakcje");

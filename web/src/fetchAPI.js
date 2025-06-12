@@ -13,7 +13,6 @@ export async function fetchApi(action, method = "GET", body = null, queryParams 
     const query = new URLSearchParams({ action, ...queryParams }).toString();
 
     const url = `../api/index.php?${query}`;
-    console.log(options.body);
 
     try {
         const res = await fetch(url, options);

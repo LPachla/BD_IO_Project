@@ -7,7 +7,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import '../styles/mapPage.css';
 import { Input, Button, Flex, Select } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   getAtrakcje,
   getZdjecia,
@@ -15,7 +15,9 @@ import {
   isAdmin,
   getPowiaty,
   getPowiatIDFromName,
-  insertAtrakcje
+  insertAtrakcje,
+  deleteAtrakcje,
+  logout
 } from '../fetchAPI';
 
 L.Icon.Default.mergeOptions({
@@ -37,7 +39,13 @@ export default function MapPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [powiaty, setPowiaty] = useState([]);
-  
+  const [user, setUser] = useState(null);
+  const [showUserPopup, setShowUserPopup] = useState(false);
+  const navigate = useNavigate();
+
+
+
+
   const [form, setForm] = useState({
     nazwa: '',
     powiat: '',
@@ -46,39 +54,77 @@ export default function MapPage() {
     typ: '',
     opis: '',
     ocena: '',
-    // zdjecie: null
+    zdjecie: null
   });
 
   const handleAddAttraction = async () => {
-  
-    
-    const attractionData = {
-      nazwa: form.nazwa,
-      powiat:(await getPowiatIDFromName({powiat: form.powiat})).id, 
-      lokalizacjaX:form.lokalizacjax,
-      lokalizacjaY:form.lokalizacjay,
-      typ: form.typ,
-      opis: form.opis,
-      ocena: parseFloat(form.ocena)
-      // zdjecie: form.zdjecie?.name || ''
-    };
+  const { nazwa, ocena, lokalizacjax, lokalizacjay } = form;
 
-    console.log(attractionData);
-    const res = await insertAtrakcje(attractionData);
+  if (!nazwa || nazwa.charAt(0) !== nazwa.charAt(0).toUpperCase()) {
+    alert('Nazwa musi zaczynać się wielką literą!');
+    return;
+  }
 
+  const ocenaFloat = parseFloat(ocena);
+  if (isNaN(ocenaFloat) || ocenaFloat < 1 || ocenaFloat > 5) {
+    alert('Ocena musi być liczbą od 1 do 5!');
+    return;
+  }
+
+  const decimalRegex = /^\d+\.\d+$/;
+  const x = parseFloat(lokalizacjax);
+  const y = parseFloat(lokalizacjay);
+
+  if (!decimalRegex.test(lokalizacjax) || !decimalRegex.test(lokalizacjay)) {
+    alert('Lokalizacja X i Y muszą być w formacie dziesiętnym, np. 22.5!');
+    return;
+  }
+
+  if (y < 21.1420 || y > 23.5478 || x < 49.0022 || x > 50.8203) {
+    alert('Lokalizacja musi znajdować się w granicach województwa podkarpackiego!');
+    return;
+  }
+
+
+  const attractionData = {
+    nazwa: form.nazwa,
+    powiat: (await getPowiatIDFromName({ powiat: form.powiat })).id,
+    lokalizacjaX: form.lokalizacjay,
+    lokalizacjaY: form.lokalizacjax,
+    typ: form.typ,
+    opis: form.opis,
+    ocena: ocenaFloat
+    // zdjecie: form.zdjecie?.name || ''
+  };
+
+  const res = await insertAtrakcje(attractionData);
+
+  if (res?.error) {
+    alert('Błąd: ' + res.error);
+  } else {
+    alert('Dodano atrakcję!');
+    window.location.reload(); 
+  }
+};
+
+const handleDeleteAttraction = async (id) => {
+  if (window.confirm('Czy na pewno chcesz usunąć tę atrakcję?')) {
+    const res = await deleteAtrakcje({ id });
     if (res?.error) {
       alert('Błąd: ' + res.error);
     } else {
-      alert('Dodano atrakcję!');
-      setForm({ nazwa: '', powiat: '', lokalizacjax: '', lokalizacjay: '', typ: '', opis: '', ocena: '', zdjecie: null });
+      alert('Usunięto atrakcję.');
+      window.location.reload();
     }
-  };
+  }
+};
+
 
 
   useEffect(() => {
     const fetchPowiaty = async () => {
       const data = await getPowiaty();
-      const mapped = data.map(p => ({ value: p.powiat, label: p.powiat.charAt(0).toUpperCase() + p.powiat.slice(1) }));
+      const mapped = data.map(p => ({ value: p.powiat, label: p.powiat}));
       setPowiaty(mapped);
     };
     fetchPowiaty();
@@ -86,12 +132,14 @@ export default function MapPage() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const user = await getUser();
-      const adminCheck = await isAdmin(user);
+      const userData = await getUser();
+      setUser(userData);
+      const adminCheck = await isAdmin(userData);
       setIsAdminUser(adminCheck);
     };
     fetchUser();
   }, []);
+
 
   useEffect(() => {
     const fetchAttractions = async () => {
@@ -129,6 +177,7 @@ export default function MapPage() {
 
       <div className="filters">
         <Input
+          style={{ width: '450px' }}
           size="md"
           radius="xl"
           placeholder="Wyszukaj miejsce..."
@@ -136,6 +185,7 @@ export default function MapPage() {
           onChange={(e) => setSearchTerm(e.currentTarget.value)}
           leftSection={<img src="/icons/search.svg" alt="search" className="input-icon" />}
         />
+        
         <Select
           placeholder="Typ atrakcji"
           size="md"
@@ -153,6 +203,68 @@ export default function MapPage() {
         />
       </div>
 
+        <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <img
+            src="/icons/logout-2.svg"
+            alt="Logout"
+            className="input-icon"
+            style={{ width: 50, height: 50, cursor: 'pointer' }}
+            onClick={async () => {
+              if (window.confirm('Czy na pewno chcesz się wylogować?')) {  
+                navigate('/');
+                await logout();
+              }
+            }}
+          />
+
+          <div style={{ position: 'relative' }}>
+            <img
+              src="/icons/user.svg"
+              alt="User icon"
+              className="input-icon"
+              style={{ width: 50, height: 50, cursor: 'pointer' }}
+              onClick={() => setShowUserPopup((prev) => !prev)}
+            />
+            {showUserPopup && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '44px',
+                  right: 0,
+                  background: '#fff',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+                  padding: '12px 16px',
+                  zIndex: 10000,
+                  width: '220px',
+                  fontFamily: 'Georgia, serif'
+                }}
+              >
+                {user ? (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      <img src="/icons/user_full.svg" alt="User" className="input-icon" />
+                      <span>{user.imie} {user.nazwisko}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      <img src="/icons/mail.svg" alt="Mail" className="input-icon" />
+                      <span>{user.email}</span>
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#666' }}>
+                      Rola: <strong>{user.role}</strong>
+                    </div>
+                  </div>
+                ) : (
+                  <span>Nie zalogowano</span>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+
+
+
       <div className="main-content">
         <div className="map-wrapper">
           <MapContainer center={[50.0413, 21.999]} zoom={13} className="map">
@@ -163,9 +275,21 @@ export default function MapPage() {
                   <div className="popup-content">
                     <h3>{a.name}</h3>
                     <img src={a.image} alt={a.name} className="popup-image" />
-                    <Link to={`/details/${a.id}`}>
-                      <Button size="xs" color="#195b35" radius="xl">Zobacz szczegóły</Button>
-                    </Link>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                      <Link to={`/details/${a.id}`}>
+                        <Button size="xs" color="#195b35" radius="xl">Szczegóły</Button>
+                      </Link>
+                      {isAdminUser && (
+                        <Button
+                          size="xs"
+                          color="red"
+                          radius="xl"
+                          onClick={() => handleDeleteAttraction(a.id)}
+                        >
+                          Usuń
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </Popup>
               </Marker>
@@ -184,7 +308,7 @@ export default function MapPage() {
             <Select placeholder="Typ atrakcji" data={[{ value: 'zabytek', label: 'Zabytek' }, { value: 'park', label: 'Park' }, { value: 'pomnik', label: 'Pomnik' }, { value: 'muzeum', label: 'Muzeum' }]} value={form.typ} onChange={(val) => setForm({ ...form, typ: val })} style={{ marginBottom: '10px' }} />
             <textarea placeholder="Opis" rows={4} value={form.opis} onChange={(e) => setForm({ ...form, opis: e.target.value })} style={{ width: '100%', padding: '8px', fontFamily: 'Georgia, serif', fontSize: '14px', border: '1px solid #ced4da', borderRadius: '8px', marginBottom: '10px', resize: 'vertical' }} />
             <Input placeholder="Ocena (1–5)" type="number" min={1} max={5} step="0.1" value={form.ocena} onChange={(e) => setForm({ ...form, ocena: e.target.value })} style={{ marginBottom: '10px' }} />
-            {/* <Input type="file" accept="image/*" onChange={(e) => setForm({ ...form, zdjecie: e.target.files[0] })} style={{ marginBottom: '16px' }} /> */}
+            <Input type="file" accept="image/*" onChange={(e) => setForm({ ...form, zdjecie: e.target.files[0] })} style={{ marginBottom: '16px' }} /> 
             <Button fullWidth color="#195b35" radius="xl" onClick={handleAddAttraction}>Dodaj atrakcję</Button>
           </div>
         )}

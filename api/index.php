@@ -181,6 +181,21 @@ switch ($method) {
                         echo json_encode(['error' => 'Invalid input']);
                     }
                     break;
+                case 'deleteAtrakcje':
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    if ($data && isset($data['id'])) {
+                        $photos = deleteZdjecia($pdo, $data['id']);
+                        $count = deleteAtrakcje($pdo, $data['id']);
+                        if($count >= 0){
+                            echo json_encode(['message' => 'Attraction deleted', 'rows_affected' => $count, 'photos_deleted' => $photos]);
+                        }else{
+                            echo json_encode($count);
+                        }
+                        
+                    } else {
+                        echo json_encode(['error' => 'Invalid input']);
+                    }
+                    break;
 
                 default:
                     echo json_encode(['error' => 'Unknown action']);
