@@ -23,6 +23,19 @@ export async function fetchApi(action, method = "GET", body = null, queryParams 
     }
 }
 
+async function login(email, password) {
+    const data = { email, password };
+    const response = await fetchApi("login", "POST", data);
+    if (response && response.error) {
+        return { error: response.error };
+    }
+    return response;
+}
+
+async function isAdmin(user) {
+    return user && user.role === 'admin';
+}
+
 async function getPowiaty() {
     return await fetchApi("powiaty");
 }
@@ -39,20 +52,48 @@ async function getZdjecia() {
     return await fetchApi("zdjecia");
 }
 
-async function insertAtrakcje(data) {
-    return await fetchApi(null, "POST", data);
+async function insertAtrakcje(data, user) {
+    if (!isAdmin(user)) {
+        return { error: "Permission denied, only admin can add attractions" };
+    }
+    return await fetchApi("insertAtrakcje", "POST", data);
 }
 
 async function deleteAtrakcje(data) {
-    return await fetchApi(null, "DELETE", data);
+    return await fetchApi("deleteAtrakcje", "DELETE", data);
 }
 
+async function updateUser(data) {
+    return await fetchApi("updateUser", "PUT", data);
+}
+
+async function deleteUser(data) {
+    return await fetchApi("deleteUser", "DELETE", data);
+}
+
+async function createUser(data) {
+    return await fetchApi("createUser", "POST", data);
+}
+
+async function getUser() {
+    return await fetchApi("getUser", "GET");
+}
+
+async function logout() {
+    return await fetchApi("logout", "POST");
+}
 export {
     getPowiaty,
     getPowiatIDFromName,
     getAtrakcje,
     getZdjecia,
     insertAtrakcje,
-    deleteAtrakcje
+    deleteAtrakcje,
+    login,
+    isAdmin,
+    updateUser,
+    deleteUser,
+    createUser,
+    getUser,
+    logout
 };
-
