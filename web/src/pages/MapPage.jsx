@@ -411,32 +411,36 @@ const handleDeleteAttraction = async (id) => {
                   position={[a.lat, a.lng]}
                   icon={icon}
                 >
-                  <Popup maxWidth={250}>
-                    <div style={{ fontFamily: 'Georgia, serif', textAlign: 'center'}}>
-                      <h3 style={{ fontSize: '10px', marginBottom: '4px' }}>{a.name}</h3>
-                      <img
-                        src={a.image}
-                        alt={a.name}
-                        style={{ width: '100%', borderRadius: '4px', marginBottom: '4px' }}
-                      />
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <Button 
-                          size="xs" 
-                          color="#195b35" 
-                          radius="xl" 
-                          style={{ flex: 1 }} 
-                          onClick={() => setDestination([a.lat, a.lng])}
+                  <Popup>
+                  <div className="popup-content">
+                    <h3>{a.name}</h3>
+                    <img src={a.image} alt={a.name} className="popup-image" />
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <Button 
+                        size="xs" 
+                        color="#195b35" 
+                        radius="xl" 
+                        style={{ flex: 1 }} 
+                        onClick={() => setDestination([a.lat, a.lng])}
+                      >
+                        Nawiguj
+                      </Button>
+                      <Link to={`/details/${a.id}`}>
+                        <Button size="xs" color="#195b35" radius="xl">Szczegóły</Button>
+                      </Link>
+                      {isAdminUser && (
+                        <Button
+                          size="xs"
+                          color="red"
+                          radius="xl"
+                          onClick={() => handleDeleteAttraction(a.id)}
                         >
-                          Nawiguj
+                          Usuń
                         </Button>
-                        <Link to={`/details/${a.id}`} style={{ flex: 1 }}>
-                          <Button size="xs" color="#195b35" radius="xl" style={{ width: '100%' }}>
-                            Zobacz szczegóły
-                          </Button>
-                        </Link>
-                      </div>
+                      )}
                     </div>
-                  </Popup>
+                  </div>
+                </Popup>
                 </Marker>
             );
           })}
