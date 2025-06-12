@@ -43,9 +43,6 @@ export default function MapPage() {
   const [showUserPopup, setShowUserPopup] = useState(false);
   const navigate = useNavigate();
 
-
-
-
   const [form, setForm] = useState({
     nazwa: '',
     powiat: '',
@@ -85,7 +82,6 @@ export default function MapPage() {
     return;
   }
 
-
   const attractionData = {
     nazwa: form.nazwa,
     powiat: (await getPowiatIDFromName({ powiat: form.powiat })).id,
@@ -93,8 +89,8 @@ export default function MapPage() {
     lokalizacjaY: form.lokalizacjax,
     typ: form.typ,
     opis: form.opis,
-    ocena: ocenaFloat
-    // zdjecie: form.zdjecie?.name || ''
+    ocena: ocenaFloat,
+    zdjecie: form.zdjecie
   };
 
   const res = await insertAtrakcje(attractionData);
@@ -119,8 +115,6 @@ const handleDeleteAttraction = async (id) => {
   }
 };
 
-
-
   useEffect(() => {
     const fetchPowiaty = async () => {
       const data = await getPowiaty();
@@ -140,7 +134,6 @@ const handleDeleteAttraction = async (id) => {
     fetchUser();
   }, []);
 
-
   useEffect(() => {
     const fetchAttractions = async () => {
       try {
@@ -153,7 +146,7 @@ const handleDeleteAttraction = async (id) => {
           type: item.typ,
           lat: item.lokalizacjay,
           lng: item.lokalizacjax,
-          image: `/images/${imagesData.find(img => img.atrakcja == item.id)?.zdjecia}.jpg`
+          image: `/images/${imagesData.find(img => img.atrakcja == item.id)?.zdjecia}`
         }));
         setAttractions(formatted);
       } catch (err) {
@@ -275,9 +268,6 @@ const handleDeleteAttraction = async (id) => {
           </div>
         </div>
 
-
-
-
       <div className="main-content">
         <div className="map-wrapper">
           <MapContainer center={[50.007739, 22.22]} zoom={8} className="map" maxBounds={[[49.0022, 21.1420], [50.8203, 23.5478]]} maxBoundsViscosity={1.0} minZoom={8}>
@@ -322,7 +312,7 @@ const handleDeleteAttraction = async (id) => {
             <Select placeholder="Typ atrakcji" data={[{ value: 'zabytek', label: 'Zabytek' }, { value: 'park', label: 'Park' }, { value: 'pomnik', label: 'Pomnik' }, { value: 'muzeum', label: 'Muzeum' }]} value={form.typ} onChange={(val) => setForm({ ...form, typ: val })} style={{ marginBottom: '10px' }} />
             <textarea placeholder="Opis" rows={4} value={form.opis} onChange={(e) => setForm({ ...form, opis: e.target.value })} style={{ width: '100%', padding: '8px', fontFamily: 'Georgia, serif', fontSize: '14px', border: '1px solid #ced4da', borderRadius: '8px', marginBottom: '10px', resize: 'vertical' }} />
             <Input placeholder="Ocena (1–5)" type="number" min={1} max={5} step="0.1" value={form.ocena} onChange={(e) => setForm({ ...form, ocena: e.target.value })} style={{ marginBottom: '10px' }} />
-            <Input type="file" accept="image/*" onChange={(e) => setForm({ ...form, zdjecie: e.target.files[0] })} style={{ marginBottom: '16px' }} /> 
+            <Input type="file" accept="image/*" onChange={(e) => setForm({ ...form, zdjecie: e.target.files[0] })} style={{ marginBottom: '16px' }} />
             <Button fullWidth color="#195b35" radius="xl" onClick={handleAddAttraction}>Dodaj atrakcję</Button>
           </div>
         )}

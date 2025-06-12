@@ -34,7 +34,7 @@ export default function PopularPage() {
             description: item.opis,
             ocena: item.ocena,
             powiat: item.powiat,
-            image: `/images/${imageData.find(img => img.atrakcja == item.id)?.zdjecia || 'default'}.jpg`
+            image: `/images/${imageData.find(img => img.atrakcja == item.id).zdjecia}`
           }));
         setAttractions(mapped);
         setFilteredAttractions(mapped.sort((a, b) => b.ocena - a.ocena).slice(0, 6));

@@ -67,7 +67,7 @@ export default function DetailsPage() {
             type: found.typ,
             lat: parseFloat(found.lokalizacjay),
             lng: parseFloat(found.lokalizacjax),
-            image: `/images/${foundImage.zdjecia}.jpg`,
+            image: `/images/${foundImage.zdjecia}`,
           });
         }
       } catch (err) {
