@@ -1,3 +1,4 @@
+
 .leaflet-control-attribution {
   display: none;
 }
@@ -7,32 +8,42 @@
   flex-direction: column;
   align-items: center;
   background-color: #f4f9f4;
-  height: 100vh;
+  min-height: 100vh;
   padding: 20px;
   font-family: 'Georgia', serif;
 }
 
 .title {
-  font-size: 48px;
-  margin-bottom: 20px;
+  font-size: 42px;
   font-weight: bold;
+  color: #195b35;
+  margin: 0;
 }
 
-.search-bar {
-  width: 500px;
+.logo {
+  width: 100px;
+  height: 100px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
 }
 
 .map-wrapper {
-  border: 2px solid black;
-  max-width: 90%;
-  max-height: 70%;
   width: 700px;
-  height: 500px;
-  margin-bottom: 20px;
-  margin-top: 20px;
-  transition: margin-left 0.3s ease;
-  position: relative;
-  z-index: 0; 
+  height: 600px;
+  border: 2px solid black;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .map {
@@ -40,10 +51,72 @@
   height: 100%;
 }
 
-.tab-switch {
-  display: flex;
-  gap: 10px;
+.popup-image {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+.popup-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 240px;
+}
 
+.main-content {
+  display: flex;
+  gap: 32px;
+  margin-top: 10px;
+}
 
+.admin-form {
+  flex: 1;
+  text-align: center;
+  background: white;
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Georgia', serif;
+  color: #195b35;
+  max-width: 400px;
+}
+
+.bottom-tabs-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.bottom-tabs {
+  display: flex;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid #c4e6c6;
+  background-color: #fff;
+}
+
+.bottom-tabs button {
+  width: 180px;
+  padding: 10px 0;
+  border: none;
+  background: #fff;
+  color: #195b35;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  font-family: 'Georgia', serif;
+  transition: background 0.2s, color 0.2s;
+}
+
+.bottom-tabs button.selected {
+  background: #eaf7ea;
+  color: #195b35;
+  font-weight: 600;
+}

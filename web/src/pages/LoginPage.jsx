@@ -1,24 +1,36 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button, TextInput, Title, Paper } from '@mantine/core';
-import { Link } from 'react-router-dom';
 import '../styles/loginPage.css';
+import { login } from '../fetchAPI';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogin = () => {
-    if (username && password) {
-      navigate('/map');
-    } else {
-      alert('Wprowadź login i hasło!');
+  const [username, setUsername] = useState(location.state?.email || '');
+  const [password, setPassword] = useState(location.state?.password || '');
+  const [error, setError] = useState(null);
+
+  const handleLogin = async () => {
+    setError(null);
+
+    if (!username || !password) {
+      setError('Wprowadź login i hasło!');
+      return;
     }
-  };
 
-  const handleRegister = () => {
-    alert('Funkcja rejestracji jeszcze nie gotowa 🙂');
+    const response = await login(username, password);
+    if (response.error) {
+      const translatedError =
+        response.error === 'Invalid email or password'
+          ? 'Nieprawidłowy email lub hasło'
+          : response.error;
+
+      setError(translatedError);
+    } else {
+      navigate('/map');
+    }
   };
 
   return (
@@ -45,6 +57,8 @@ export default function LoginPage() {
           leftSection={<img src="/icons/password.svg" alt="password" className="input-icon" />}
         />
 
+        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+
         <Button color="#195b35" radius="xl" fullWidth mt="md" onClick={handleLogin}>
           Zaloguj się
         </Button>
@@ -54,11 +68,10 @@ export default function LoginPage() {
           fullWidth
           component={Link}
           to="/register"
-          color = 'gray'
+          color="gray"
         >
           Nie masz konta? Zarejestruj się
         </Button>
-
       </Paper>
     </div>
   );
