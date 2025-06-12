@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button,Select } from '@mantine/core';
+import { Button, Select } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/popularPage.css';
 import { getAtrakcje, getZdjecia, getPowiaty, getUser, logout, getPowiatIDFromName } from '../fetchAPI';
@@ -22,7 +22,7 @@ export default function PopularPage() {
     async function fetchData() {
       try {
         const data = await getAtrakcje();
-        const imageData = await getZdjecia();
+        let imageData = await getZdjecia();
         const powiatData = await getPowiaty();
 
         setPowiaty(powiatData);
@@ -34,7 +34,7 @@ export default function PopularPage() {
             description: item.opis,
             ocena: item.ocena,
             powiat: item.powiat,
-            image: `/images/${imageData.find(img => img.atrakcja == item.id).zdjecia}`
+            image: `/images/${imageData.find((img) => img.atrakcja == item.id).zdjecia}`,
           }));
         setAttractions(mapped);
         setFilteredAttractions(mapped.sort((a, b) => b.ocena - a.ocena).slice(0, 6));
@@ -51,7 +51,7 @@ export default function PopularPage() {
     fetchData();
     fetchUserData();
   }, []);
-    useEffect (() =>{
+  useEffect(() => {
     if (!selectedPowiat) {
       setFilteredAttractions(attractions.sort((a, b) => b.ocena - a.ocena).slice(0, 6));
     } else {

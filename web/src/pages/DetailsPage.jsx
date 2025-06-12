@@ -46,7 +46,6 @@ export default function DetailsPage() {
   const [attraction, setAttraction] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Dodane stany i logika użytkownika
   const [user, setUser] = useState(null);
   const [showUserPopup, setShowUserPopup] = useState(false);
 
