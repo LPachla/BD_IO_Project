@@ -6,8 +6,11 @@ export async function fetchApi(action, method = "GET", body = null, queryParams 
         },
     };
 
-    if (body) {
+    if (body && !(body instanceof FormData)) {
+        options.headers["Content-Type"] = "application/json";
         options.body = JSON.stringify(body);
+    } else if (body instanceof FormData) {
+        options.body = body;
     }
 
     const query = new URLSearchParams({ action, ...queryParams }).toString();
@@ -56,7 +59,13 @@ async function insertAtrakcje(data, user) {
     if (!isAdmin(user)) {
         return { error: "Permission denied, only admin can add attractions" };
     }
-    return await fetchApi("insertAtrakcje", "POST", data);
+
+    const formData = new FormData();
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+
+    return await fetchApi("insertAtrakcje", "POST", formData);
 }
 
 async function deleteAtrakcje(data) {
@@ -82,6 +91,9 @@ async function getUser() {
 async function logout() {
     return await fetchApi("logout", "POST");
 }
+
+
+
 export {
     getPowiaty,
     getPowiatIDFromName,
