@@ -127,7 +127,7 @@ switch ($method) {
                         ]);
                         $atrakcjaId = $stmt->fetchColumn();
 
-                        $uploadDir = realpath(__DIR__ . '/../web/public/images') . '/';
+                        $uploadDir = realpath(__DIR__ . '/img') . '/';
                         if (!is_dir($uploadDir)) {
                             mkdir($uploadDir, 0777, true);
                         }
