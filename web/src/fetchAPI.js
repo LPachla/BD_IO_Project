@@ -56,11 +56,11 @@ async function insertAtrakcje(data, user) {
     if (!isAdmin(user)) {
         return { error: "Permission denied, only admin can add attractions" };
     }
-    return await fetchApi(null, "POST", data);
+    return await fetchApi("insertAtrakcje", "POST", data);
 }
 
 async function deleteAtrakcje(data) {
-    return await fetchApi(null, "DELETE", data);
+    return await fetchApi("deleteAtrakcje", "DELETE", data);
 }
 
 async function updateUser(data) {

@@ -10,7 +10,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 function loginUser($pdo, $email, $password)
 {
-    $stmt = $pdo->prepare("SELECT id, email, password, role FROM users WHERE email = :email");
+    $stmt = $pdo->prepare("SELECT id, email, password, role, imie, nazwisko FROM users WHERE email = :email");
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -27,19 +27,34 @@ function isAdmin($user)
 
 function isLoggedIn()
 {
-    return isset($_SESSION['user_id']);
+    return isset($_SESSION['id']);
 }
 
 function logoutUser()
 {
     session_unset();
     session_destroy();
+    setcookie(session_name(), '', time() - 3600, '/');
+    session_start();
 }
 
 function getUserData()
 {
     return [
-        'user_id' => $_SESSION['user_id'] ?? null,
-        'is_admin' => $_SESSION['is_admin'] ?? false
+        'id' => $_SESSION['id'] ?? null,
+        'role' => $_SESSION['role'] ?? null,
+        'email' => $_SESSION['email'] ?? null,
+        'password' => $_SESSION['password'] ?? null,
+        'imie' => $_SESSION['imie'] ?? null,
+        'nazwisko' => $_SESSION['nazwisko'] ?? null
     ];
+}
+
+function getCurrentUser($pdo)
+{
+    if (!isLoggedIn()) return null;
+
+    $stmt = $pdo->prepare("SELECT id, email, role FROM users WHERE email = :email");
+    $stmt->execute([':email' => $_SESSION['email']]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }

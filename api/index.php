@@ -60,8 +60,12 @@ switch ($method) {
                     if (isset($data['email'], $data['password'])) {
                         $user = loginUser($pdo, $data['email'], $data['password']);
                         if ($user) {
-                            $_SESSION['user_id'] = $user['id'];
-                            $_SESSION['is_admin'] = $user['role'] === 'admin';
+                            $_SESSION['id'] = $user['id'];
+                            $_SESSION['role'] = $user['role'];
+                            $_SESSION['email'] = $user['email'];
+                            $_SESSION['password'] = $user['password'];
+                            $_SESSION['imie'] = $user['imie'];
+                            $_SESSION['nazwisko'] = $user['nazwisko'];
                             echo json_encode(['message' => 'Login successful', 'user' => $user]);
                         } else {
                             echo json_encode(['error' => 'Invalid email or password']);
@@ -72,47 +76,85 @@ switch ($method) {
                     break;
 
                 case 'insertAtrakcje':
-                    if (isLoggedIn() && isset($user) && isAdmin($user)) {
-                        if (isset($data['nazwa'], $data['powiat_id'])) {
-                            $id = insertAtrakcje($pdo, $data, $user);
+                    if(!isLoggedIn()){
+                        return ['error' => 'Not logged in'];
+                    }
+                    if (isLoggedIn() && $_SESSION['role'] === 'admin') {
+                        $required = ['nazwa', 'powiat', 'typ', 'opis', 'lokalizacjaX', 'lokalizacjaY', 'ocena'];
+                        $missing = [];
+
+                        foreach ($required as $key) {
+                            if (empty($data[$key])) {
+                                $missing[] = $key;
+                            }
+                        }
+                        if(count($missing) === 0){
+                            $id = insertAtrakcje($pdo, $data);
                             echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
                         } else {
-                            echo json_encode(['error' => 'Invalid input']);
+                            echo json_encode(['error' => 'Invalid input']);echo json_encode(['error' => 'Missing input data: ' . implode(', ', $missing)]);
                         }
                     } else {
                         echo json_encode(['error' => 'Permission denied, only admin can add attractions']);
                     }
                     break;
                 case 'createUser':
-                    $result = createUser($pdo, $data);
-                    echo json_encode($result);
-                    break;
-                case 'logout':
-                    logoutUser();
-                    echo json_encode(['message' => 'Logged out']);
-                    break;
+                    $required = ['email', 'password', 'imie', 'nazwisko'];
+                    $missing = [];
 
+                    foreach ($required as $key) {
+                        if (empty($data[$key])) {
+                            $missing[] = $key;
+                        }
+                    }
 
-                default:
-                    echo json_encode(['error' => 'Unknown action']);
-            }
-        } else {
-            echo json_encode(['error' => 'No action specified']);
-        }
-        break;
-
-    case 'PUT':
-        if (isset($_GET['action'])) {
-            switch ($_GET['action']) {
-                case 'updateUser':
-                    $data = json_decode(file_get_contents('php://input'), true);
-                    if ($data && isset($data['id'], $data['email'], $data['password'], $data['role'])) {
-                        $count = updateUser($pdo, $data);
-                        echo json_encode(['message' => 'User updated', 'rows_affected' => $count]);
+                    if (count($missing) === 0) {
+                        $data['role'] = 'user';
+                        $result = createUser($pdo, $data);
+                        echo json_encode($result);
                     } else {
-                        echo json_encode(['error' => 'Invalid input']);
+                        echo json_encode(['error' => 'Missing input data: ' . implode(', ', $missing)]);
                     }
                     break;
+
+                    
+                case 'logout':
+                    if(isLoggedIn()){
+                        logoutUser();
+                        echo json_encode(['message' => 'Logged out']);
+                    } else{
+                        echo json_encode(['error' => "Can't log out - user not logged in"]);
+                    }
+                    
+                    break;
+                case 'updateUser':
+                    $data = json_decode(file_get_contents('php://input'), true);
+
+                    if (!isLoggedIn()) {
+                        echo json_encode(['error' => 'Unauthorized']);
+                        break;
+                    }
+
+                    $currentUserId = $_SESSION['id'];
+                    $currentUserRole = $_SESSION['role'] ?? 'user';
+
+                    $isOwnAccount = isset($data['id']) && $currentUserId == $data['id'];
+                    $isTryingToChangeRole = isset($data['role']) && $data['role'] !== $currentUserRole;
+
+                    if (!$isOwnAccount && $currentUserRole !== 'admin') {
+                        echo json_encode(['error' => 'Permission denied']);
+                        break;
+                    }
+
+                    if ($isTryingToChangeRole && $currentUserRole !== 'admin') {
+                        echo json_encode(['error' => 'Only admin can change user roles']);
+                        break;
+                    }
+
+                    $count = updateUser($pdo, $data);
+                    echo json_encode(['message' => 'User updated', 'rows_affected' => $count]);
+                    break;
+
 
                 default:
                     echo json_encode(['error' => 'Unknown action']);
@@ -127,9 +169,14 @@ switch ($method) {
             switch ($_GET['action']) {
                 case 'deleteUser':
                     $data = json_decode(file_get_contents('php://input'), true);
-                    if ($data && isset($data['id'])) {
-                        $count = deleteUser($pdo, $data['id']);
-                        echo json_encode(['message' => 'User deleted', 'rows_affected' => $count]);
+                    if ($data && isset($data['email'])) {
+                        $count = deleteUser($pdo, $data['email']);
+                        if($count >= 0){
+                            echo json_encode(['message' => 'User deleted', 'rows_affected' => $count]);
+                        }else{
+                            echo json_encode($count);
+                        }
+                        
                     } else {
                         echo json_encode(['error' => 'Invalid input']);
                     }
