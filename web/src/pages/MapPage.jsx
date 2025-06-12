@@ -43,9 +43,6 @@ export default function MapPage() {
   const [showUserPopup, setShowUserPopup] = useState(false);
   const navigate = useNavigate();
 
-
-
-
   const [form, setForm] = useState({
     nazwa: '',
     powiat: '',
@@ -85,7 +82,6 @@ export default function MapPage() {
     return;
   }
 
-
   const attractionData = {
     nazwa: form.nazwa,
     powiat: (await getPowiatIDFromName({ powiat: form.powiat })).id,
@@ -93,8 +89,8 @@ export default function MapPage() {
     lokalizacjaY: form.lokalizacjax,
     typ: form.typ,
     opis: form.opis,
-    ocena: ocenaFloat
-    // zdjecie: form.zdjecie?.name || ''
+    ocena: ocenaFloat,
+    zdjecie: form.zdjecie
   };
 
   const res = await insertAtrakcje(attractionData);
@@ -119,8 +115,6 @@ const handleDeleteAttraction = async (id) => {
   }
 };
 
-
-
   useEffect(() => {
     const fetchPowiaty = async () => {
       const data = await getPowiaty();
@@ -139,7 +133,6 @@ const handleDeleteAttraction = async (id) => {
     };
     fetchUser();
   }, []);
-
 
   useEffect(() => {
     const fetchAttractions = async () => {
@@ -261,9 +254,6 @@ const handleDeleteAttraction = async (id) => {
             )}
           </div>
         </div>
-
-
-
 
       <div className="main-content">
         <div className="map-wrapper">
