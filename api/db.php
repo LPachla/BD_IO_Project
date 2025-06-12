@@ -57,7 +57,7 @@ function getAtrakcje($pdo)
 
 function insertAtrakcje($pdo, $data)
 {
-    if(!isLoggedIn()){
+    if (!isLoggedIn()) {
         return ['error' => 'Not logged in'];
     }
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
@@ -81,7 +81,7 @@ function insertAtrakcje($pdo, $data)
 
 function updateAtrakcje($pdo, $data)
 {
-    if(!isLoggedIn()){
+    if (!isLoggedIn()) {
         return ['error' => 'Not logged in'];
     }
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
@@ -106,7 +106,7 @@ function updateAtrakcje($pdo, $data)
 
 function deleteAtrakcje($pdo, $id)
 {
-    if(!isLoggedIn()){
+    if (!isLoggedIn()) {
         return ['error' => 'Not logged in'];
     }
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
