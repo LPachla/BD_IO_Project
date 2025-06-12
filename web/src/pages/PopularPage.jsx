@@ -25,7 +25,7 @@ export default function PopularPage() {
             id: item.id,
             name: item.nazwa,
             description: item.opis,
-            image: `/images/${imageData.find(img => img.atrakcja == item.id).zdjecia}.jpg`
+            image: `/images/${imageData.find(img => img.atrakcja == item.id).zdjecia}`
           }));
 
         setAttractions(mapped);

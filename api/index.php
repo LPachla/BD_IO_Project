@@ -76,28 +76,77 @@ switch ($method) {
                     break;
 
                 case 'insertAtrakcje':
-                    if(!isLoggedIn()){
-                        return ['error' => 'Not logged in'];
+                    if (!isLoggedIn()) {
+                        echo json_encode(['error' => 'Not logged in']);
+                        break;
                     }
-                    if (isLoggedIn() && $_SESSION['role'] === 'admin') {
-                        $required = ['nazwa', 'powiat', 'typ', 'opis', 'lokalizacjaX', 'lokalizacjaY', 'ocena'];
-                        $missing = [];
-
-                        foreach ($required as $key) {
-                            if (empty($data[$key])) {
-                                $missing[] = $key;
-                            }
-                        }
-                        if(count($missing) === 0){
-                            $id = insertAtrakcje($pdo, $data);
-                            echo json_encode(['message' => 'Inserted Attraction', 'id' => $id]);
-                        } else {
-                            echo json_encode(['error' => 'Missing input data: ' . implode(', ', $missing)]);
-                        }
-                    } else {
+                    if ($_SESSION['role'] !== 'admin') {
                         echo json_encode(['error' => 'Permission denied, only admin can add attractions']);
+                        break;
+                    }
+
+                    $required = ['nazwa', 'powiat', 'typ', 'opis', 'lokalizacjaX', 'lokalizacjaY', 'ocena'];
+                    $missing = [];
+                    foreach ($required as $key) {
+                        if (!isset($_POST[$key]) || empty($_POST[$key])) {
+                            $missing[] = $key;
+                        }
+                    }
+                    if (count($missing) > 0) {
+                        echo json_encode(['error' => 'Missing input data: ' . implode(', ', $missing)]);
+                        break;
+                    }
+
+                    if (!isset($_FILES['zdjecie'])) {
+                        echo json_encode(['error' => 'Missing image file']);
+                        break;
+                    }
+
+                    $pdo->beginTransaction();
+                    try {
+                        $stmt = $pdo->prepare("INSERT INTO atrakcje (nazwa, powiat, typ, opis, lokalizacjaX, lokalizacjaY, ocena)
+                                            VALUES (:nazwa, :powiat, :typ, :opis, :lokalizacjaX, :lokalizacjaY, :ocena) RETURNING id");
+                        $stmt->execute([
+                            ':nazwa' => $_POST['nazwa'],
+                            ':powiat' => $_POST['powiat'],
+                            ':typ' => $_POST['typ'],
+                            ':opis' => $_POST['opis'],
+                            ':lokalizacjaX' => $_POST['lokalizacjaX'],
+                            ':lokalizacjaY' => $_POST['lokalizacjaY'],
+                            ':ocena' => $_POST['ocena'],
+                        ]);
+                        $atrakcjaId = $stmt->fetchColumn();
+
+                        $uploadDir = '/img/';
+                        if (!is_dir($uploadDir)) {
+                            mkdir($uploadDir, 0777, true);
+                        }
+
+                        $file = $_FILES['zdjecie'];
+                        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                        $uniqueName = $atrakcjaId. '.' .$ext;
+                        $targetPath = $uploadDir . $uniqueName;
+
+                        if (!rename($file['tmp_name'], $targetPath)) {
+                            throw new Exception('Failed to move uploaded file');
+                        }
+                        chmod($targetPath, 0777);
+
+                        $stmt = $pdo->prepare("INSERT INTO zdjecia (atrakcja, zdjecia) VALUES (:atrakcja, :zdjecia)");
+                        $stmt->execute([
+                            ':atrakcja' => $atrakcjaId,
+                            ':zdjecia' => $uniqueName
+                        ]);
+
+                        $pdo->commit();
+
+                        echo json_encode(['message' => 'Inserted Attraction and Image', 'atrakcja_id' => $atrakcjaId, 'filename' => $uniqueName]);
+                    } catch (Exception $e) {
+                        $pdo->rollBack();
+                        echo json_encode(['error' => 'Transaction failed: ' . $e->getMessage()]);
                     }
                     break;
+
                 case 'createUser':
                     $required = ['email', 'password', 'imie', 'nazwisko'];
                     $missing = [];
@@ -117,15 +166,14 @@ switch ($method) {
                     }
                     break;
 
-                    
                 case 'logout':
-                    if(isLoggedIn()){
+                    if (isLoggedIn()) {
                         logoutUser();
                         echo json_encode(['message' => 'Logged out']);
-                    } else{
+                    } else {
                         echo json_encode(['error' => "Can't log out - user not logged in"]);
                     }
-                    
+
                     break;
                 case 'updateUser':
                     $data = json_decode(file_get_contents('php://input'), true);
@@ -155,7 +203,6 @@ switch ($method) {
                     echo json_encode(['message' => 'User updated', 'rows_affected' => $count]);
                     break;
 
-
                 default:
                     echo json_encode(['error' => 'Unknown action']);
             }
@@ -171,12 +218,11 @@ switch ($method) {
                     $data = json_decode(file_get_contents('php://input'), true);
                     if ($data && isset($data['email'])) {
                         $count = deleteUser($pdo, $data['email']);
-                        if($count >= 0){
+                        if ($count >= 0) {
                             echo json_encode(['message' => 'User deleted', 'rows_affected' => $count]);
-                        }else{
+                        } else {
                             echo json_encode($count);
                         }
-                        
                     } else {
                         echo json_encode(['error' => 'Invalid input']);
                     }
