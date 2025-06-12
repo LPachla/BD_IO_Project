@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -168,6 +168,19 @@ const handleDeleteAttraction = async (id) => {
     return a.name.toLowerCase().includes(phrase) && (!selectedType || a.type === selectedType);
   });
 
+  function MapClickHandler({ setForm }) {
+    useMapEvent('click', (e) => {
+      const { lat, lng } = e.latlng;
+      setForm((prev) => ({
+        ...prev,
+        lokalizacjax: lat.toFixed(6),
+        lokalizacjay: lng.toFixed(6),
+      }));
+    });
+
+    return null; // ten komponent nic nie renderuje
+  }
+
   return (
     <Flex direction="column" align="center" className="page-container">
       <div className="header">
@@ -267,7 +280,8 @@ const handleDeleteAttraction = async (id) => {
 
       <div className="main-content">
         <div className="map-wrapper">
-          <MapContainer center={[50.0413, 21.999]} zoom={13} className="map">
+          <MapContainer center={[50.007739, 22.22]} zoom={8} className="map" maxBounds={[[49.0022, 21.1420], [50.8203, 23.5478]]} maxBoundsViscosity={1.0} minZoom={8}>
+             <MapClickHandler setForm={setForm} />
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {filteredAttractions.map((a) => (
               <Marker key={a.id} position={[a.lat, a.lng]} icon={icons[a.type] || icons.zabytek}>

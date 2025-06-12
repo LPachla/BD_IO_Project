@@ -8,10 +8,9 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@mantine/core';
 import '../styles/detailsPage.css';
-import { getAtrakcje, getZdjecia } from '../fetchAPI';
+import { getAtrakcje, getZdjecia, getUser, logout } from '../fetchAPI';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-
 
 function MapFocus({ lat, lng }) {
   const map = useMap();
@@ -25,7 +24,6 @@ function MapFocus({ lat, lng }) {
 
   return null;
 }
-
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -47,6 +45,10 @@ export default function DetailsPage() {
   const [attractions, setAttractions] = useState([]);
   const [attraction, setAttraction] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Dodane stany i logika użytkownika
+  const [user, setUser] = useState(null);
+  const [showUserPopup, setShowUserPopup] = useState(false);
 
   useEffect(() => {
     async function fetchAttraction() {
@@ -75,7 +77,13 @@ export default function DetailsPage() {
       }
     }
 
+    async function fetchUserData() {
+      const userData = await getUser();
+      setUser(userData);
+    }
+
     fetchAttraction();
+    fetchUserData();
   }, [id]);
 
   if (loading) {
@@ -100,7 +108,77 @@ export default function DetailsPage() {
   const nextAttraction = attractions[currentIndex + 1];
 
   return (
-    <div className="details-page-container">
+    <div className="details-page-container" style={{ position: 'relative', paddingTop: '70px' }}>
+      {/* Nagłówek z wyloguj i profil */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 10,
+          right: 20,
+          display: 'flex',
+          gap: '16px',
+          alignItems: 'center',
+          zIndex: 10000,
+        }}
+      >
+        <img
+          src="/icons/logout-2.svg"
+          alt="Logout"
+          className="input-icon"
+          style={{ width: 50, height: 50, cursor: 'pointer' }}
+          onClick={async () => {
+            if (window.confirm('Czy na pewno chcesz się wylogować?')) {
+              await logout();
+              navigate('/');
+            }
+          }}
+        />
+
+        <div style={{ position: 'relative' }}>
+          <img
+            src="/icons/user.svg"
+            alt="User icon"
+            className="input-icon"
+            style={{ width: 50, height: 50, cursor: 'pointer' }}
+            onClick={() => setShowUserPopup(prev => !prev)}
+          />
+          {showUserPopup && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '44px',
+                right: 0,
+                background: '#fff',
+                borderRadius: '12px',
+                boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+                padding: '12px 16px',
+                width: '220px',
+                fontFamily: 'Georgia, serif',
+                zIndex: 10001,
+              }}
+            >
+              {user ? (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                    <img src="/icons/user_full.svg" alt="User" className="input-icon" />
+                    <span>{user.imie} {user.nazwisko}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                    <img src="/icons/mail.svg" alt="Mail" className="input-icon" />
+                    <span>{user.email}</span>
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#666' }}>
+                    Rola: <strong>{user.role}</strong>
+                  </div>
+                </div>
+              ) : (
+                <span>Nie zalogowano</span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
       {prevAttraction && (
         <Button
           className="details-arrow-btn left"
@@ -136,8 +214,15 @@ export default function DetailsPage() {
           <div className="details-map">
             <MapContainer
               center={[attraction.lat, attraction.lng]}
-              zoom={15}
+              zoom={8}
               style={{ width: '100%', height: '100%' }}
+              dragging={false}
+              touchZoom={false}
+              scrollWheelZoom={false}
+              doubleClickZoom={false}
+              boxZoom={false}
+              keyboard={false}
+              zoomControl={false}
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
