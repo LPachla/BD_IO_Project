@@ -41,8 +41,8 @@ export default function MapPage() {
   const [form, setForm] = useState({
     nazwa: '',
     powiat: '',
-    lokalizacjax: '',
-    lokalizacjay: '',
+    lokalizacjaX: '',
+    lokalizacjaY: '',
     typ: '',
     opis: '',
     ocena: '',
@@ -54,9 +54,9 @@ export default function MapPage() {
     
     const attractionData = {
       nazwa: form.nazwa,
-      powiat:await getPowiatIDFromName(form.powiat), 
-      lokalizacjax:form.lokalizacjax,
-      lokalizacjay:form.lokalizacjay,
+      powiat:(await getPowiatIDFromName({powiat: form.powiat})).id, 
+      lokalizacjaX:form.lokalizacjax,
+      lokalizacjaY:form.lokalizacjay,
       typ: form.typ,
       opis: form.opis,
       ocena: parseFloat(form.ocena)
