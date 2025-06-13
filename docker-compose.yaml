@@ -16,6 +16,7 @@ services:
       - 80:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./web/public/images:/img
     networks:
       - frontnet
       - backnet
@@ -48,6 +49,7 @@ services:
       - backnet
     volumes:
       - ./api:/var/www/html
+      - ./web/public/images:/img
 
   pgadmin:
     restart: unless-stopped
