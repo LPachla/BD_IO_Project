@@ -2,9 +2,12 @@ import '@mantine/core/styles.css';
 import { createTheme, MantineProvider} from '@mantine/core';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import LoginPage from './pages/LoginPage';
 import MapPage from './pages/MapPage';
 import PopularPage from './pages/PopularPage';
 import DetailsPage from './pages/DetailsPage';
+import RegisterPage from './pages/RegisterPage';
+
 
 const theme = createTheme({
   green: [
@@ -30,12 +33,12 @@ function App() {
     <MantineProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/">
-            <Route index element = {<MapPage/>}/>
-            <Route path = "details/:id" element = {<DetailsPage/>}/>
-            <Route path = "popular" element = {<PopularPage/>}/>
-          </Route>
-        </Routes>    
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/popular" element={<PopularPage />} />
+          <Route path="/details/:id" element={<DetailsPage />} />
+        </Routes>
       </BrowserRouter>
     </MantineProvider>
   );

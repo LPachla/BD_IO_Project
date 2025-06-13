@@ -48,6 +48,7 @@ services:
       - backnet
     volumes:
       - ./api:/var/www/html
+      - ./web/public/images:/img
 
   pgadmin:
     restart: unless-stopped

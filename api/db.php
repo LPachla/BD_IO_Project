@@ -18,18 +18,12 @@ function connectDB()
 
 function getPowiaty($pdo)
 {
-    if(!isLoggedIn()){
-        return ['error' => 'Not logged in'];
-    }
     $stmt = $pdo->query("SELECT * FROM powiaty");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getPowiatIDFromName($pdo, $data)
 {
-    if(!isLoggedIn()){
-        return ['error' => 'Not logged in'];
-    }
     $stmt = $pdo->prepare("SELECT id FROM powiaty WHERE powiat = :powiat");
     $stmt->execute([
         ':powiat' => $data['powiat'],
@@ -39,18 +33,24 @@ function getPowiatIDFromName($pdo, $data)
 
 function getZdjecia($pdo)
 {
-    if(!isLoggedIn()){
-        return ['error' => 'Not logged in'];
-    }
     $stmt = $pdo->query("SELECT * FROM zdjecia");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getAtrakcje($pdo)
-{
+function deleteZdjecia($pdo, $id) {
     if(!isLoggedIn()){
         return ['error' => 'Not logged in'];
     }
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        return ['error' => 'Only admin can insert atrakcje'];
+    }
+    $stmt = $pdo->prepare("DELETE FROM zdjecia WHERE atrakcja = :id");
+    $stmt->execute([':id' => $id]);
+    return $stmt->rowCount();
+}
+
+function getAtrakcje($pdo)
+{
     $stmt = $pdo->query("SELECT * FROM atrakcje");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
