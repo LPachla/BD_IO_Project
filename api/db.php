@@ -2,10 +2,7 @@
 
 function connectDB()
 {
-    $host = 'bd';
-    $db = 'postgres';
-    $user = 'postgres';
-    $pass = 'password';
+    include_once "db_connect.php";
 
     try {
         $pdo = new PDO("pgsql:host=$host;dbname=$db", $user, $pass);
