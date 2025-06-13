@@ -96,7 +96,6 @@ function NavigationController({ userPosition, destination, onStepChange }) {
       map._routingControl.on('routesfound', function(e) {
       const route = e.routes[0];
       if (route && route.instructions && route.instructions.length > 0) {
-        // Wyciągnij pierwszy krok
         onStepChange(route.instructions[0]);
       }
     });
@@ -361,17 +360,7 @@ const handleDeleteAttraction = async (id) => {
           </div>
         </div>
 
-      <div
-        className="main-content"
-        style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr auto 1fr',
-        gap: '24px',
-        alignItems: 'flex-start',
-        width: '100%',
-        justifyItems: 'center'
-      }}
-    >
+      <div className="main-content">
         <div style={{ width: '260px', fontFamily: 'Georgia, serif' }}>
           {nextStep ? (
             <div style={{

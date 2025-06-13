@@ -64,7 +64,6 @@ export default function PopularPage() {
   }, [selectedPowiat, attractions]);
   return (
     <div className="popular-page-container" style={{ position: 'relative', paddingTop: '70px' }}>
-      {/* Header with logout and user profile */}
       <div
         style={{
           position: 'fixed',
