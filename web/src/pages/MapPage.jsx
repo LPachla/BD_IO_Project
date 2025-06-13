@@ -274,34 +274,6 @@ const handleDeleteAttraction = async (id) => {
         <h1 className="title">MapCarpatia</h1>
       </div>
 
-      {nextStep && (
-        <div style={{
-          backgroundColor: '#195b35',
-          color: '#fff',
-          padding: '10px 20px',
-          borderRadius: '8px',
-          fontSize: '1.2rem',
-          marginBottom: '-20px',
-          fontFamily: 'Georgia, serif',
-          maxWidth: '700px',
-          textAlign: 'left',
-          userSelect: 'none',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '20px'
-        }}>
-          <span >{nextStep.text}</span>
-          <span style={{
-            fontSize: '1.2rem',
-            color: '#fff',
-            fontWeight: 'normal'
-          }}>
-            {formatDistance(nextStep.distance)}
-          </span>
-        </div>
-      )}
-
       <div className="filters">
         <Input
           style={{ width: '450px' }}
@@ -312,7 +284,7 @@ const handleDeleteAttraction = async (id) => {
           onChange={(e) => setSearchTerm(e.currentTarget.value)}
           leftSection={<img src="/icons/search.svg" alt="search" className="input-icon" />}
         />
-        
+      
         <Select
           placeholder="Typ atrakcji"
           size="md"
@@ -389,88 +361,116 @@ const handleDeleteAttraction = async (id) => {
           </div>
         </div>
 
-      <div className="main-content">
-        <div className="map-wrapper">
-          <MapContainer center={[50.007739, 22.22]} zoom={8} className="map" maxBounds={[[49.0022, 21.1420], [50.8203, 23.5478]]} maxBoundsViscosity={1.0} minZoom={8}>
-             <MapClickHandler setForm={setForm} />
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <SetMapToUserLocation setUserPosition={setUserPosition}/>
-            {filteredAttractions.map((a, idx) => {
-              let icon;
-              switch (a.type) {
-                case "park": icon = icons.park; break;
-                case "pomnik": icon = icons.pomnik; break;
-                case "muzeum": icon = icons.muzeum; break;
-                case "zabytek":
-                default: icon = icons.zabytek; break;
-              }
-              return (
-                
-                <Marker
-                  key={idx}
-                  position={[a.lat, a.lng]}
-                  icon={icon}
-                >
-                  <Popup>
-                  <div className="popup-content">
-                    <h3>{a.name}</h3>
-                    <img src={a.image} alt={a.name} className="popup-image" />
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <Button 
-                        size="xs" 
-                        color="#195b35" 
-                        radius="xl" 
-                        style={{ flex: 1 }} 
-                        onClick={() => setDestination([a.lat, a.lng])}
-                      >
-                        Nawiguj
-                      </Button>
-                      <Link to={`/details/${a.id}`}>
-                        <Button size="xs" color="#195b35" radius="xl">Szczegóły</Button>
-                      </Link>
-                      {isAdminUser && (
-                        <Button
-                          size="xs"
-                          color="red"
-                          radius="xl"
-                          onClick={() => handleDeleteAttraction(a.id)}
-                        >
-                          Usuń
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </Popup>
-                </Marker>
-            );
-          })}
-
-          {userPosition && destination && (
-            <NavigationController
-              userPosition={userPosition}
-              destination={destination}
-              onStepChange={setNextStep}
-            />
-          )}
-        </MapContainer>
-
-          {destination && (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                mt="md"
-                color="#195b35"
-                radius="xl"
-                size="md"
-                onClick={() => setDestination(null)}
-              >
-                Wyczyść trasę
-              </Button>
+      <div
+        className="main-content"
+        style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr auto 1fr',
+        gap: '24px',
+        alignItems: 'flex-start',
+        width: '100%',
+        justifyItems: 'center'
+      }}
+    >
+        <div style={{ width: '260px', fontFamily: 'Georgia, serif' }}>
+          {nextStep ? (
+            <div style={{
+              backgroundColor: '#195b35',
+              color: '#fff',
+              padding: '16px',
+              borderRadius: '12px',
+              fontSize: '1rem'
+            }}>
+              <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>📍 Najbliższy krok:</div>
+              <div style={{ marginBottom: '4px' }}>{nextStep.text}</div>
+              <div style={{ fontSize: '0.9rem', color: '#ddd' }}>Odległość: {formatDistance(nextStep.distance)}</div>
             </div>
+          ) : (
+            <div style={{ color: '#888', fontStyle: 'italic' }}>Brak aktywnej trasy</div>
           )}
         </div>
 
+        <div style={{ flexShrink: 0 }}>
+          <div className="map-wrapper">
+            <MapContainer center={[50.007739, 22.22]} zoom={8} className="map" maxBounds={[[48.5022, 20.1420], [51.7203, 24.5478]]} maxBoundsViscosity={1.0} minZoom={8}>
+              <MapClickHandler setForm={setForm} />
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <SetMapToUserLocation setUserPosition={setUserPosition} />
+              {filteredAttractions.map((a, idx) => {
+                let icon;
+                switch (a.type) {
+                  case "park": icon = icons.park; break;
+                  case "pomnik": icon = icons.pomnik; break;
+                  case "muzeum": icon = icons.muzeum; break;
+                  case "zabytek":
+                  default: icon = icons.zabytek; break;
+                }
+                return (
+                  <Marker
+                    key={idx}
+                    position={[a.lat, a.lng]}
+                    icon={icon}
+                  >
+                    <Popup>
+                      <div className="popup-content">
+                        <h3>{a.name}</h3>
+                        <img src={a.image} alt={a.name} className="popup-image" />
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <Button
+                            size="xs"
+                            color="#195b35"
+                            radius="xl"
+                            style={{ flex: 1 }}
+                            onClick={() => setDestination([a.lat, a.lng])}
+                          >
+                            Nawiguj
+                          </Button>
+                          <Link to={`/details/${a.id}`}>
+                            <Button size="xs" color="#195b35" radius="xl">Szczegóły</Button>
+                          </Link>
+                          {isAdminUser && (
+                            <Button
+                              size="xs"
+                              color="red"
+                              radius="xl"
+                              onClick={() => handleDeleteAttraction(a.id)}
+                            >
+                              Usuń
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                );
+              })}
+
+              {userPosition && destination && (
+                <NavigationController
+                  userPosition={userPosition}
+                  destination={destination}
+                  onStepChange={setNextStep}
+                />
+              )}
+            </MapContainer>
+
+            {destination && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+                <Button
+                  color="#195b35"
+                  radius="xl"
+                  size="md"
+                  onClick={() => setDestination(null)}
+                >
+                  Wyczyść trasę
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
         {isAdminUser && (
-          <div className="admin-form">
+          <div className="admin-form" style={{ width: '280px' }}>
             <h2 style={{ textAlign: 'center', marginTop: 0, marginBottom: '16px' }}>Dodaj atrakcję</h2>
 
             <Input placeholder="Nazwa atrakcji" value={form.nazwa} onChange={(e) => setForm({ ...form, nazwa: e.target.value })} style={{ marginBottom: '10px' }} />
@@ -485,6 +485,8 @@ const handleDeleteAttraction = async (id) => {
           </div>
         )}
       </div>
+
+
 
       <div className="bottom-tabs-row">
         <div className="bottom-tabs">
