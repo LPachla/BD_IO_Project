@@ -108,7 +108,6 @@ export default function DetailsPage() {
 
   return (
     <div className="details-page-container" style={{ position: 'relative', paddingTop: '70px' }}>
-      {/* Nagłówek z wyloguj i profil */}
       <div
         style={{
           position: 'fixed',
